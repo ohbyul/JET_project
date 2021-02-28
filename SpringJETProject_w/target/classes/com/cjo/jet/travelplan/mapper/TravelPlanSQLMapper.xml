@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.travelplan.mapper.TravelPlanSQLMapper">
+	
+	
+	<select id="createKey" resultType="int">
+		<![CDATA[
+			SELECT JET_BOARD_TRAVELPLAN_SEQ.nextval FROM DUAL
+		]]>
+	</select>
+	
+	<insert id="insert">
+		<![CDATA[
+			INSERT INTO jet_board_travelplan VALUES(
+			#{jet_board_travelplan_no},
+			#{jet_member_no},
+			#{jet_board_travelplan_title},
+			'N',
+			SYSDATE
+			)
+		]]>
+	</insert>
+	
+	<select id="selectByPlanNo" resultType="com.cjo.jet.vo.TravelPlanVo">
+		<![CDATA[
+			SELECT * FROM jet_board_travelplan 
+			WHERE jet_board_travelplan_no = #{no}
+		]]>
+	</select>
+	
+	<select id="selectAllPlanByW" resultType="com.cjo.jet.vo.TravelPlanVo">
+		<![CDATA[
+			SELECT * FROM jet_board_travelplan WHERE jet_member_no = #{jet_member_no} ORDER BY jet_board_travelplan_no DESC
+		]]>
+	</select>
+	
+	<!-- 글리스트 출력 -->
+	<select id="selectAllPlan" resultType="com.cjo.jet.vo.TravelPlanVo">
+		SELECT * FROM jet_board_travelplan 
+		ORDER BY jet_board_travelplan_no DESC
+	</select>
+	<delete id="deletePlan">
+		<![CDATA[
+			DELETE FROM jet_board_travelplan WHERE jet_board_travelplan_no = #{no}
+		]]>
+	</delete>
+	<update id="updatePlan">
+		<![CDATA[
+			UPDATE jet_board_travelplan SET 
+			jet_board_travelplan_title = #jet_board_travelplan_title}
+			WHERE jet_board_travelplan_no = #{jet_board_travelplan_no}
+		]]>
+	</update>
+	<update id="updateShareStatus">
+		<![CDATA[
+			UPDATE jet_board_travelplan SET JET_travelplan_sharestatus = 'Y' WHERE JET_board_travelplan_no = #{no}
+		]]>
+	</update>
+	
+	<update id="updateShareStatusToN">
+		<![CDATA[
+			UPDATE jet_board_travelplan SET JET_travelplan_sharestatus = 'N' WHERE JET_board_travelplan_no = #{no}
+		]]>
+	</update>
+	<select id="selectByShareStatusY" resultType="com.cjo.jet.vo.TravelPlanVo">
+		<![CDATA[
+			SELECT * FROM jet_board_travelplan 
+			WHERE jet_travelplan_sharestatus = 'Y'
+			ORDER BY jet_board_travelplan_no DESC
+		]]>
+	</select>
+</mapper>

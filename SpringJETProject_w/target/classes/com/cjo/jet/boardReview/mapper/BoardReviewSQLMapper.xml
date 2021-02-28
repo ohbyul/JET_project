@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.boardReview.mapper.BoardReviewSQLMapper">
+	
+	<select id="createKey" resultType="int">
+		<![CDATA[
+			SELECT jet_board_review_seq.nextval
+			FROM DUAL		
+		]]>
+		
+	</select>
+
+
+	<insert id="insertBoardReview">
+		<![CDATA[
+			INSERT INTO jet_board_review VALUES(
+				#{jet_board_review_no}, 
+				#{jet_member_no}, 
+				#{jet_board_review_title}, 
+				#{jet_board_review_content}, 
+				0, 
+				SYSDATE,
+				#{jet_board_review_category_no}
+			)
+			
+		]]>
+	</insert>
+	
+	<select id="selectAll" resultType="com.cjo.jet.vo.BoardReviewVo">
+		<![CDATA[
+		SELECT * 
+		FROM (
+		    SELECT c1.*,ROWNUM as rnum 
+		    FROM (
+		        SELECT * 
+		        FROM jet_board_review 
+		        ORDER BY jet_board_review_no DESC) c1
+		    ) c2
+		WHERE c2.rnum >= (#{page_num}-1)*10+1 
+		AND c2.rnum <= #{page_num}*10		
+	]]>
+	</select>
+	
+	<select id="selectByTitle" resultType="com.cjo.jet.vo.BoardReviewVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_review
+			WHERE jet_board_review_title LIKE '%' || #{serch_word} || '%'
+			ORDER BY jet_board_review_no DESC			
+		]]>
+	</select>
+	
+	<select id="selectByContent" resultType="com.cjo.jet.vo.BoardReviewVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_review
+			WHERE jet_board_review_content LIKE '%' || #{serch_word} || '%'
+			ORDER BY jet_board_review_no DESC
+		]]>
+	</select>
+	
+	<select id="selectByWriter" resultType="com.cjo.jet.vo.BoardReviewVo">
+		<![CDATA[
+			SELECT r.*
+			FROM jet_member m, jet_board_review r 
+			WHERE m.jet_member_no = r.jet_member_no
+			AND m.jet_member_nick LIKE '%' || #{serch_word} || '%'
+			ORDER BY jet_board_review_no DESC
+		]]>
+	</select>
+	
+	
+	<select id="selectByNo" resultType="com.cjo.jet.vo.BoardReviewVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_review
+			WHERE jet_board_review_no = #{no}
+		]]>
+	</select>
+	
+	<delete id="deleteByNo">
+		<![CDATA[
+			DELETE 
+			FROM jet_board_review
+			WHERE jet_board_review_no = #{no}
+		]]>
+	
+	</delete>
+	
+	<update id="updateByNo">
+		<![CDATA[
+			UPDATE jet_board_review
+			SET jet_board_review_title = #{jet_board_review_title}, 
+				jet_board_review_content = #{jet_board_review_content}
+			WHERE jet_board_review_no = #{jet_board_review_no}
+		]]>
+	</update>
+	
+	<update id="increaseReadCount">
+		<![CDATA[
+			UPDATE jet_board_review
+			SET jet_board_review_readcount = jet_board_review_readcount + 1
+			WHERE jet_board_review_no = #{no}
+		]]>
+	</update>
+	
+	<select id="getPageCount" resultType="int">
+		<![CDATA[
+			SELECT CEIL(COUNT(*)/10) 
+			FROM jet_board_review
+		]]>
+	</select>
+	
+	<!-- 카테고리 추가 이거 웨 읻씀? -->
+	<select id="selectCategoryNo" resultType="com.cjo.jet.vo.ReviewCategoryVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_review_category
+			WHERE jet_board_review_category_no = #{no}
+		]]>
+	</select>
+	<!-- 카테고리 찾기 -->
+	<select id="selectCategory" resultType="com.cjo.jet.vo.BoardReviewVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_review 
+			WHERE jet_board_review_category_no = #{category_no} 
+		]]>
+	</select>
+	
+	
+</mapper>

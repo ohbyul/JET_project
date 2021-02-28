@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mapper의 xml파일 이름은 인터페이스 이름과 동일하게 작성 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.message.mapper.MessageSQLMapper">
+	<select id="createKey" resultType="int">
+		<![CDATA[
+			SELECT jet_member_seq.nextval FROM DUAL
+		]]>
+	</select>
+	<insert id="insertMessage">
+		<![CDATA[
+			INSERT INTO jet_message 
+			VALUES(
+				#{jet_message_no},
+				#{jet_member_sender},
+				#{jet_member_receiver},
+				#{jet_message_title},
+				#{jet_message_content},
+				SYSDATE,
+				null
+			)
+		]]>
+	</insert>
+	<!-- 보낸 쪽지함 -->
+	<select id="selectSentMessage" resultType="com.cjo.jet.vo.MessageVo">
+		<![CDATA[
+		    SELECT m2.* 
+		        FROM(
+		            SELECT m1.*,ROWNUM as mnum 
+		            FROM (
+		                SELECT * FROM jet_message 
+						WHERE jet_member_sender = #{sender_no}
+						ORDER BY jet_message_no DESC
+		                )m1
+		            )m2
+		        WHERE m2.mnum >= (#{page_num}-1)*10+1 
+		        AND m2.mnum <= #{page_num}*10
+		]]>
+	</select>
+	<!-- 관리자용 보낸 쪽지함 -->
+	<select id="selectSentMessageForAdmin" resultType="com.cjo.jet.vo.MessageVo">
+		<![CDATA[
+            SELECT * FROM jet_message 
+			WHERE jet_member_sender = #{sender_no}
+			ORDER BY jet_message_no DESC
+		]]>
+	</select>
+	<!-- 받은 쪽지함 -->
+	<select id="selectMessage" resultType="com.cjo.jet.vo.MessageVo">
+		<![CDATA[
+		    SELECT m2.* 
+		        FROM(
+		            SELECT m1.*,ROWNUM as mnum 
+		            FROM (
+		                SELECT * FROM jet_message 
+						WHERE jet_member_receiver = #{receiver_no}
+						ORDER BY jet_message_no DESC
+		                )m1
+		            )m2
+		        WHERE m2.mnum >= (#{page_num}-1)*10+1 
+		        AND m2.mnum <= #{page_num}*10
+		]]>
+	</select>
+	<select id="selectByTitleAndSender" resultType="com.cjo.jet.vo.MessageVo">
+		<![CDATA[
+			SELECT * FROM jet_message 
+			WHERE jet_message_title LIKE '%'|| #{search_word}|| '%'
+			AND jet_member_sender = #{sender_no}
+			ORDER BY jet_message_no DESC
+		]]>
+	</select>
+	<select id="selectByContentAndSender" resultType="com.cjo.jet.vo.MessageVo">
+		<![CDATA[
+			SELECT * FROM jet_message 
+			WHERE jet_message_content LIKE '%'|| #{search_word}|| '%'
+			AND jet_member_sender = #{sender_no} 
+			ORDER BY jet_message_no DESC
+		]]>
+	</select>
+	<select id="selectByTitleAndReceiver" resultType="com.cjo.jet.vo.MessageVo">
+		<![CDATA[
+			SELECT * FROM jet_message 
+			WHERE jet_message_title LIKE '%'|| #{search_word}|| '%'
+			AND jet_member_sender = #{receiver_no}
+			ORDER BY jet_message_no DESC
+		]]>
+	</select>
+	<select id="selectByContentAndReceiver" resultType="com.cjo.jet.vo.MessageVo">
+		<![CDATA[
+			SELECT * FROM jet_message 
+			WHERE jet_message_content LIKE '%'|| #{search_word}|| '%'
+			AND jet_member_sender = #{receiver_no}
+			ORDER BY jet_message_no DESC
+		]]>
+	</select>
+	
+	<select id="selectBySender" resultType="com.cjo.jet.vo.MessageVo">
+		<![CDATA[
+			SELECT * FROM jet_message 
+			WHERE jet_member_sender Like '%' || #{search_word} || '%' 
+			ORDER BY jet_message_no DESC
+		]]>
+	</select>
+	<select id="selectByReceiver" resultType="com.cjo.jet.vo.MessageVo">
+		<![CDATA[
+			SELECT * FROM jet_message me,jet_member m 
+			WHERE me.jet_member_receiver = m.jet_member_no 
+			AND me.jet_member_receiver LIKE '%'||#{search_word}||'%'
+			ORDER BY me.jet_message_no DESC
+		]]>
+	</select>
+	<select id="selectByMessageNo" resultType="com.cjo.jet.vo.MessageVo">
+		<![CDATA[
+			SELECT * FROM jet_message WHERE jet_message_no = #{no}
+		]]>
+	</select>
+	<select id="selectByMessageNoForReply" resultType="com.cjo.jet.vo.MessageVo">
+		<![CDATA[
+			SELECT * FROM jet_message WHERE jet_message_no = #{jet_message_no}
+		]]>
+	</select>
+	<select id="getPageCount" resultType="int">
+		<![CDATA[
+			SELECT CEIL(COUNT(*)/10) FROM jet_message
+		]]>
+	</select>
+	<insert id="replyMessage">
+		<![CDATA[
+			INSERT INTO jet_message 
+			VALUES(
+				#{jet_message_no},
+				#{jet_member_sender},
+				#{jet_member_receiver},
+				#{jet_message_title},
+				#{jet_message_content},
+				SYSDATE,
+				null
+			)
+		]]>
+	</insert>
+	<delete id="deleteMessageByNo">
+		<![CDATA[
+			DELETE FROM jet_message WHERE jet_message_no = #{no}
+		]]>
+	</delete>
+	
+</mapper>

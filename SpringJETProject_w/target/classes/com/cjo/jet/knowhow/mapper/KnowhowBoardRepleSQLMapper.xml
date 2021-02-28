@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.knowhow.mapper.KnowhowBoardRepleSQLMapper">
+
+	<!-- 댓글 쓰기 -->
+	<insert id="insertReple">
+		<![CDATA[
+		INSERT INTO jet_board_knowhow_reple VALUES (
+		    jet_board_knowhow_reple_seq.nextval,
+		    #{jet_member_no},
+		    #{jet_board_knowhow_no},
+		    #{jet_board_knowhow_reple_cont},
+		    SYSDATE
+		)
+		]]>
+	</insert>
+	
+	<!-- 댓글 보기 -->
+	<select id="selectRepleByNo" resultType="com.cjo.jet.vo.KnowhowBoardRepleVo">
+		<![CDATA[
+			SELECT *
+			FROM jet_board_knowhow_reple
+			WHERE jet_board_knowhow_no = #{no}
+			ORDER BY jet_board_knowhow_reple_no
+		]]>
+	</select>
+	
+	<!-- 댓글 개수 출력 -->
+	<select id="countReple" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*)
+			FROM jet_board_knowhow_reple
+			WHERE jet_board_knowhow_no = #{no}
+		]]>
+	</select>
+	
+	<!-- 댓글 삭제 -->
+	<delete id="deleteReple">
+		<![CDATA[
+			DELETE FROM jet_board_knowhow_reple
+			WHERE jet_board_knowhow_reple_no = #{jet_board_knowhow_reple_no}
+		]]>
+	</delete>
+	
+</mapper>

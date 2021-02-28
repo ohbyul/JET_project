@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.mypage.mapper.MyPageSQLMapper">
+
+	<select id="selectReview" resultType="com.cjo.jet.vo.BoardReviewVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_review
+			WHERE jet_member_no = #{jet_member_no}
+			ORDER BY jet_board_review_no DESC
+		]]>
+	</select>
+	<select id="selectFree" resultType="com.cjo.jet.vo.FreeboardVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_free
+			WHERE jet_member_no = #{jet_member_no}
+			ORDER BY jet_board_free_no DESC
+		]]>
+	</select>
+	<select id="selectKnow" resultType="com.cjo.jet.vo.KnowhowBoardVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_knowhow
+			WHERE jet_member_no = #{jet_member_no}
+			ORDER BY jet_board_knowhow_no DESC
+		]]>
+	
+	</select>
+	<select id="selectJet" resultType="com.cjo.jet.vo.SharePlanBoardVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_shareplan
+			WHERE jet_member_no = #{jet_member_no}
+			ORDER BY jet_board_shareplan_no DESC
+		]]>
+	</select>
+<!-- 좋아요한 글 출력-->			
+	<select id="selectReview_like" resultType="com.cjo.jet.vo.ReviewLikeVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_review_like
+			WHERE jet_member_no = #{jet_member_no}
+			ORDER BY jet_board_review_no DESC
+		]]>
+	</select>
+	
+	<select id="selectSharePlan_like" resultType="com.cjo.jet.vo.SharePlanLikeVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_shareplan_like
+			WHERE jet_member_no = #{jet_member_no}
+			ORDER BY jet_board_shareplan_no DESC
+		]]>
+	</select>
+	
+	<select id="selectKnowhow_like" resultType="com.cjo.jet.vo.KnowhowBoardLikeVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_knowhow_like
+			WHERE jet_member_no = #{jet_member_no}
+			ORDER BY jet_board_knowhow_no DESC
+		]]>
+	</select>
+	
+	<select id="selectFree_like" resultType="com.cjo.jet.vo.FreeboardLikeVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_free_like
+			WHERE jet_member_no = #{jet_member_no}
+			ORDER BY jet_board_free_no DESC
+		]]>
+	</select>
+<!-- 모집중인 파티 -->
+	<select id="selectParty" resultType="com.cjo.jet.vo.PartyBoardVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_party
+			WHERE jet_member_no = #{jet_member_no}
+			ORDER BY jet_board_party_no DESC
+		]]>
+	</select>
+<!-- 참가중인 파티 -->
+	<select id="selectAttend" resultType="com.cjo.jet.vo.PartyBoardAttendVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_party_attend
+			WHERE jet_party_attend_state_no= 2 AND 
+			jet_member_no = #{jet_member_no}
+			ORDER BY jet_party_attend_no DESC
+		]]>
+	</select>
+<!-- 내가 쓴 댓글 -->
+	
+	<!-- 공지사항 에서 내가 쓴 댓글 -->
+	<select id="selectRepleNotice" resultType="com.cjo.jet.vo.NoticeRepleVo">
+		<![CDATA[
+			SELECT * FROM JET_board_notice_reple 
+			WHERE jet_member_no = #{jet_member_no} 
+			ORDER BY jet_notice_reple_writedate DESC
+		]]>
+	</select>
+
+	<!-- 자유게시판 에서 내가 쓴 댓글 -->
+	<select id="selectRepleFree" resultType="com.cjo.jet.vo.FreeboardRepleVo">
+		<![CDATA[
+			SELECT * FROM Jet_board_free_reple 
+			WHERE jet_member_no = #{jet_member_no} 
+			ORDER BY JET_board_free_reple_writedate DESC
+		]]>
+	</select>
+	
+	<!-- 노하우게시판 에서 내가 쓴 댓글 -->
+	<select id="selectRepleKnowhow" resultType="com.cjo.jet.vo.KnowhowBoardRepleVo">
+		<![CDATA[
+			SELECT * FROM jet_board_knowhow_reple 
+			WHERE jet_member_no = #{jet_member_no} 
+			ORDER BY jet_board_knowhow_reple_date DESC
+		]]>
+	</select>
+	
+	<!-- 리뷰게시판 에서 내가 쓴 댓글 -->
+	<select id="selectRepleReview" resultType="com.cjo.jet.vo.ReviewRepleVo">
+		<![CDATA[
+			SELECT * FROM JET_board_review_reple 
+			WHERE jet_member_no = #{jet_member_no} 
+			ORDER BY JET_board_review_reple_date DESC
+		]]>
+	</select>
+	
+	<!-- 친구찾기 에서 내가 쓴 댓글 -->
+	<select id="selectRepleParty" resultType="com.cjo.jet.vo.PartyBoardAttendVo">
+		<![CDATA[
+			SELECT * FROM JET_party_attend 
+			WHERE jet_member_no = #{jet_member_no} 
+			ORDER BY jet_party_attend_writedate DESC
+		]]>
+	</select>
+	
+	<!-- 여행공유 게시판 에서 내가 쓴 댓글 -->
+	<select id="selectRepleSharePlan" resultType="com.cjo.jet.vo.SharePlanRepleVo">
+		<![CDATA[
+			SELECT * FROM JET_board_shareplan_reple 
+			WHERE jet_member_no = #{jet_member_no} 
+			ORDER BY jet_shareplan_reple_writedate DESC
+		]]>
+	</select>
+	 <select id="myWriteBoardCT" resultType="int">
+      <![CDATA[
+             select sum(count), '전체' as allpost from(
+                select count(*) as count, '자유' as post
+                from jet_board_free
+                where jet_member_no = #{jet_member_no}
+                UNION
+                select count(*) as count, '노하우' as post
+                from jet_board_knowhow
+                where jet_member_no = #{jet_member_no}
+                UNION
+                select count(*) as count, '공유' as post
+                from jet_board_shareplan
+                where jet_member_no = #{jet_member_no}
+                UNION
+                select count(*) as count, '리뷰' as post
+                from jet_board_review
+                where jet_member_no = #{jet_member_no})
+      
+      ]]>
+   </select>
+
+   <select id="myWriteRepleCT" resultType="int">
+      <![CDATA[
+             select sum(count), '전체' as allpost from(
+                select count(*) as count, '자유' as post
+                from jet_board_free_reple
+                where jet_member_no = #{jet_member_no}
+                UNION
+                select count(*) as count, '노하우' as post
+                from jet_board_knowhow_reple
+                where jet_member_no = #{jet_member_no}
+                UNION
+                select count(*) as count, '공유' as post
+                from jet_board_shareplan_reple
+                where jet_member_no = #{jet_member_no}
+                UNION
+                select count(*) as count, '리뷰' as post
+                from jet_board_review_reple
+                where jet_member_no = #{jet_member_no})
+      
+      ]]>
+   </select>
+	<insert id="memberUpgrade">
+		<![CDATA[
+			INSERT INTO jet_member_upgrade VALUES(
+				jet_member_upgrade_seq.nextval, 
+				#{jet_member_no}, 
+				SYSDATE,
+				'N'
+			)
+			
+		]]>
+	
+	</insert>
+	<select id="selectMemberNo" resultType="com.cjo.jet.vo.MemberUpgradeVo">
+		<![CDATA[
+			select * 
+			from jet_member_upgrade
+			where jet_member_no = #{jet_member_no}
+		]]>
+	</select>
+	<select id="memberUpgradeAply" resultType="com.cjo.jet.vo.MemberUpgradeVo">
+		<![CDATA[
+			select * 
+			from jet_member_upgrade
+		]]>
+	</select>
+	
+	<select id="memberUpgradeCt" resultType="int">
+		<![CDATA[
+			select count(*) 
+			from jet_member_upgrade
+		]]>
+	</select>	
+	<select id="memberUpgradeCheck" resultType="com.cjo.jet.vo.MemberUpgradeVo">
+		<![CDATA[
+			select * from jet_member_upgrade
+			WHERE jet_member_upgrade_check = 'Y'
+		]]>
+	</select>
+	<select id="selectMydetailClassList" resultType="com.cjo.jet.vo.ClassDetailVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_class_detail
+			WHERE jet_class_no 
+			IN (
+			    SELECT jet_class_no FROM jet_class
+			    WHERE jet_member_no = #{jet_member_no}
+			)
+		]]>	
+	</select>
+	<!-- 파티게시판 나를 제외한 참여자 memberVo 오별-->
+	<select id="selectPartyAttendMemberVo" resultType="com.cjo.jet.vo.MemberVo">
+		<![CDATA[
+			SELECT t2.* FROM (
+			    SELECT JET_member_no FROM JET_Board_party 
+			    WHERE jet_board_party_no = #{jet_board_party_no}
+			    UNION
+			    SELECT jet_member_no FROM JET_Party_attend
+			    WHERE jet_board_party_no = #{jet_board_party_no}
+			    AND jet_party_attend_state_no = 2) t1 , JET_Member t2
+			WHERE t2.jet_member_no = t1.jet_member_no
+			AND t1.jet_member_no <> #{jet_member_no}
+		]]>
+	</select>
+</mapper>

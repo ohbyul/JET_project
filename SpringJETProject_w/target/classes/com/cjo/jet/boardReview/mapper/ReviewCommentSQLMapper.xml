@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.boardReview.mapper.ReviewCommentSQLMapper">
+
+	<insert id="insertComment">
+		<![CDATA[
+			INSERT INTO jet_board_Review_comment VALUES(
+				jet_board_review_comment_seq.nextval, 
+				#{jet_member_no}, 
+				#{jet_board_review_reple_no}, 
+				#{jet_board_review_comment_title}, 
+				SYSDATE
+			)
+		]]>
+	</insert>
+	
+	<select id="selectByRepleNo" resultType="com.cjo.jet.vo.ReviewCommentVo">
+		<![CDATA[
+			select * 
+			from jet_board_review_comment 
+			WHERE jet_board_review_reple_no = #{jet_board_review_reple_no}
+			ORDER BY jet_board_review_comment_no ASC
+		]]>
+	</select>
+
+
+
+</mapper>

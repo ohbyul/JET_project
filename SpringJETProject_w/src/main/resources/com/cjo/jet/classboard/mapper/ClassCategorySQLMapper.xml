@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.classboard.mapper.ClassCategorySQLMapper">
+
+	<!-- 글 카테고리 보기 -->
+	<select id="selectByNo" resultType="com.cjo.jet.vo.ClassCategoryVo">
+		<![CDATA[
+			SELECT * FROM jet_class_category
+			WHERE jet_class_category_no = #{jet_class_category_no}
+		]]>
+	</select>
+
+</mapper>

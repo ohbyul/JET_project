@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.csboard.mapper.CsBoardSQLMapper">
+	<select id="creatKey" resultType="int">
+		<![CDATA[
+			SELECT jet_board_m_cs_seq.nextval FROM Dual
+		]]>
+	</select>
+	
+	 <!-- 글쓰기 /nextval 변경 프라이머리키 뜯어냈음으로]-->
+	<insert id="insert">
+		<![CDATA[
+			INSERT INTO jet_board_m_cs VALUES(
+		    #{jet_board_m_cs_no},
+		    #{jet_member_no},
+		    #{jet_board_m_cs_title},
+		    #{jet_board_m_cs_content},
+		    0,
+		    #{jet_board_m_cs_customeremail},
+		    SYSDATE,
+		    #{jet_board_m_cs_category_no}
+			)
+		]]>
+	</insert>
+	
+	
+	<!-- 게시판 출력... 페이징 처리.. -->
+	<select id="selectAll" resultType="com.cjo.jet.vo.CsBoardVo">
+		<![CDATA[
+			SELECT c2.* 
+			FROM(
+			    SELECT c1.*,ROWNUM as rnum 
+			    FROM(SELECT * FROM jet_board_m_cs ORDER BY jet_board_m_cs_no DESC)c1)c2
+			WHERE c2.rnum >= (#{page_num}-1)*10+1 
+			AND c2.rnum <= #{page_num}*10
+		]]>
+	</select>
+	
+	<!-- 게시판 출력... no 페이징 .. -->
+	<select id="selectAllNoPage" resultType="com.cjo.jet.vo.CsBoardVo">
+		<![CDATA[
+			SELECT * FROM JET_board_m_cs 
+			ORDER BY jet_board_m_cs_no DESC
+		]]>
+	</select>
+
+	
+
+	<!-- 글 제목 검색 -->
+	<select id="selectByTitle" resultType="com.cjo.jet.vo.CsBoardVo">
+		<![CDATA[
+			SELECT * FROM jet_board_m_cs 
+			WHERE jet_board_m_cs_title LIKE '%' || #{search_word} || '%'
+			ORDER BY jet_board_m_cs_no DESC
+		]]>
+	</select>
+	
+	<!-- 글 내용 검색 -->
+	<select id="selectByContent" resultType="com.cjo.jet.vo.CsBoardVo">
+		<![CDATA[
+			SELECT * FROM jet_board_m_cs 
+			WHERE jet_board_m_cs_content LIKE '%' || #{search_word} || '%'
+			ORDER BY jet_board_m_cs_no DESC
+		]]>
+	</select>
+
+	<!-- 글 작성자 검색 -->
+	<select id="selectByWriter" resultType="com.cjo.jet.vo.CsBoardVo">
+		<![CDATA[
+			SELECT c.* FROM jet_board_m_cs c , jet_Member m
+			WHERE m.jet_member_no = c.jet_member_no 
+			AND m.jet_member_nick LIKE '%' || #{search_word} || '%'
+			ORDER BY jet_board_m_cs_no DESC
+		]]>
+	</select>
+
+	<!-- 글 보기 -->
+	<select id="selectByNo" resultType="com.cjo.jet.vo.CsBoardVo">
+		<![CDATA[
+			SELECT * FROM jet_board_m_cs WHERE jet_board_m_cs_no = #{no}
+		]]>
+	</select>
+	
+	<!-- 글 삭제-->
+	<delete id="deleteByNo">
+		<![CDATA[
+			DELETE FROM jet_board_m_cs WHERE jet_board_m_cs_no = #{no}
+		]]>
+	</delete>
+		
+	
+	<!-- 글 수정 -->
+	<update id="update">
+		<![CDATA[			
+			UPDATE jet_board_m_cs 
+			SET jet_board_m_cs_title = #{jet_board_m_cs_title},
+			jet_board_m_cs_content = #{jet_board_m_cs_content} 
+			WHERE jet_board_m_cs_no = #{jet_board_m_cs_no}
+		]]>
+	</update>
+	
+	
+	<!-- 글 조회수 증가 -->
+	 <update id="increaseReadcount">
+	 	<![CDATA[
+	 		UPDATE jet_board_m_cs 
+	 		SET jet_board_m_cs_readcount = jet_board_m_cs_readcount + 1 
+			WHERE jet_board_m_cs_no = #{no}
+	 	]]>
+	 </update>
+ 
+  	<!--페이지 갯수 -->
+	 <select id="getPageCount" resultType="int">
+	 	<![CDATA[
+	 		SELECT CEIL(COUNT(*)/10) FROM jet_board_m_cs
+	 	]]>
+	 </select>
+
+	 
+
+
+</mapper>

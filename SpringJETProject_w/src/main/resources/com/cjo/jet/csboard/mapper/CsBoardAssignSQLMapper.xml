@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.csboard.mapper.CsBoardAssignSQLMapper">
+
+	<!--문의글 관리자 배정 인서트 -->
+	<insert id="insertAssign">
+		<![CDATA[
+			INSERT INTO JET_assign VALUES (
+		    jet_assign_seq.nextval,
+		    #{jet_board_m_cs_no},
+		    #{jet_member_no},
+		    SYSDATE
+			)
+		]]>
+	</insert>
+	
+	<!-- 문의글에 미답변 갯수가 가장 적은 관리자 +그중 관리자 번호가 낮은 ....의 no출력  -->
+	<select id="selectByAssignAdminNo" resultType="int">
+		<![CDATA[
+			SELECT MIN(jma_outer.jet_member_no) FROM JET_Member jma_outer
+			WHERE jet_member_grade = 9 
+			AND
+			(
+			    SELECT COUNT(*) 
+			    FROM JET_assign ja , JET_board_m_cs mcs
+			    WHERE ja.jet_member_no = jma_outer.JET_Member_no
+			    AND ja.jet_board_m_cs_no = mcs.jet_board_m_cs_no
+			    AND 0 = (
+			        SELECT COUNT(*) 
+			        FROM JET_board_a_cs xx 
+			        WHERE xx.jet_board_m_cs_no = mcs.jet_board_m_cs_no
+			    )
+			)
+			=
+			(
+			SELECT MIN(t1.cnt) FROM 
+			(
+			    SELECT JET_Member_no , 
+			    (
+			        SELECT COUNT(*) 
+			        FROM JET_assign ja , JET_board_m_cs mcs
+			        WHERE ja.jet_member_no = jma.JET_Member_no
+			        AND ja.jet_board_m_cs_no = mcs.jet_board_m_cs_no
+			        AND 0 = (
+			            SELECT COUNT(*) 
+			            FROM JET_board_a_cs xx 
+			            WHERE xx.jet_board_m_cs_no = mcs.jet_board_m_cs_no
+			        )
+			    ) as cnt 
+			    FROM JET_Member jma WHERE jet_member_grade = 9
+			) t1
+			)
+
+		]]>
+	</select>
+	
+	<select id="selectByAdminNo" resultType="com.cjo.jet.vo.AdminAssignVo">
+		<![CDATA[
+			SELECT * FROM JET_assign WHERE jet_member_no= #{jet_member_no}
+		]]>
+	</select>
+	
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.classboard.mapper.ClassImageSQLMapper">
+
+	<!-- 이미지 삽입 -->
+	<insert id="insertImage">
+		<![CDATA[
+			INSERT INTO jet_class_image
+			VALUES (
+				jet_class_image_seq.nextval,
+				#{jet_class_no},
+				#{jet_class_image_link}
+			)	
+		]]>
+	</insert>
+	
+	<!-- 이미지 보기 -->
+	<select id="selectByNo" resultType="com.cjo.jet.vo.ClassImageVo">
+		<![CDATA[
+			SELECT * FROM jet_class_image
+			WHERE jet_class_no = #{jet_class_no}
+		]]>
+	</select>
+	
+</mapper>

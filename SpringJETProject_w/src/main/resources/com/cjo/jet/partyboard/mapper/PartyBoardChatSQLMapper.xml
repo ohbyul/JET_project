@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.partyboard.mapper.PartyBoardChatSQLMapper">
+
+	<!-- 참가 신청 인서트 -->
+	 <insert id="insert">
+	 	<![CDATA[
+	 		INSERT INTO JET_party_chat VALUES (
+		    JET_party_chat_seq.nextval,
+		    #{jet_member_no},
+		    #{jet_board_party_no},
+		    #{jet_party_chat_content},
+		    SYSDATE
+			)
+	 	]]>
+	 </insert>
+	 <!-- 출력 -->
+	 <select id="selectAllChat" resultType="com.cjo.jet.vo.PartyChatVo">
+	 	<![CDATA[
+	 		SELECT * FROM JET_party_chat 
+	 		WHERE jet_board_party_no = #{jet_board_party_no}	
+			ORDER BY jet_party_chat_writedate ASC 	
+	 	]]>
+	 </select>
+
+	<!-- 각 멤버no마다 승인된 파티 리스트 -->
+	<select id="selectChatList" resultType="com.cjo.jet.vo.PartyBoardAttendVo">
+	 	<![CDATA[
+	 		SELECT * FROM JET_party_attend 
+	 		WHERE jet_party_attend_state_no =2 
+	 		AND jet_member_no = #{jet_member_no}
+	 		ORDER BY jet_party_attend_no DESC
+	 	]]>
+	 </select>
+
+	<!-- 내가 개설한 파티방 리스트 -->
+	<select id="selectMyOpenedchatList" resultType="com.cjo.jet.vo.PartyBoardVo">
+	 	<![CDATA[
+	 		SELECT * FROM JET_board_party
+	 		WHERE jet_member_no =#{jet_member_no}
+            AND jet_board_party_fixcount >1
+	 		ORDER BY jet_board_party_no DESC
+	 	]]>
+	 </select>
+	 	 	
+
+
+</mapper>
+

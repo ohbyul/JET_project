@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.csboard.mapper.CsBoardAnswerSQLMapper">
+	<insert id="insert">
+		<![CDATA[
+			INSERT INTO jet_board_a_cs VALUES(
+		    jet_board_a_cs_seq.nextval,
+		    #{jet_member_no},
+		    #{jet_board_m_cs_no},
+		    #{jet_board_a_cs_title},
+		    #{jet_board_a_cs_content},
+		    0,
+		    SYSDATE
+			)
+		]]>
+	</insert>
+	
+	<!-- 답변 글 보기 -->
+	<select id="selectByNo" resultType="com.cjo.jet.vo.CsBoardAnswerVo">
+		<![CDATA[
+			SELECT * FROM jet_board_a_cs WHERE jet_board_a_cs_no = #{no}
+		]]>
+	</select>
+
+	<!-- 포린 키 생성 ..-->
+	<select id="foreignKey" resultType="com.cjo.jet.vo.CsBoardAnswerVo">
+		<![CDATA[
+			SELECT * FROM jet_board_a_cs WHERE jet_board_m_cs_no = #{no}
+		]]>
+	</select>
+	
+	<!-- 글 조회수 증가 -->
+	 <update id="increaseReadcount">
+	 	<![CDATA[
+	 		UPDATE jet_board_a_cs 
+	 		SET jet_board_a_readcount = jet_board_a_readcount + 1 
+			WHERE jet_board_a_cs_no = #{no}
+	 	]]>
+	 </update>
+	 
+	 <!-- 글 삭제-->
+	<delete id="deleteByNo">
+		<![CDATA[
+			DELETE FROM JET_board_a_cs WHERE jet_board_a_cs_no = #{no}
+		]]>
+	</delete>
+	 
+</mapper>

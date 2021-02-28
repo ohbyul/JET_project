@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.noticeboard.mapper.NoticeRepleSQLMapper">
+
+	<!-- 
+		<![CDATA[]]>
+	 -->
+	 
+	 <insert id="insert">
+	 	<![CDATA[
+	 		INSERT INTO JET_board_notice_reple VALUES (
+		    JET_board_notice_reple_seq.nextval,
+		    #{jet_board_notice_no},
+		    #{jet_member_no},
+		    #{jet_notice_reple_content},
+		    SYSDATE
+			)
+	 	]]>
+	 </insert>
+
+	<select id="selectByContentNo" resultType="com.cjo.jet.vo.NoticeRepleVo">
+	 	<![CDATA[
+	 		SELECT * FROM JET_board_notice_reple 
+	 		WHERE jet_board_notice_no = #{jet_board_notice_no}	
+			ORDER BY jet_notice_reple_no ASC 	
+	 	]]>
+	 </select>
+	 
+	 <!-- 리플 갯수 출력 -->
+	 <select id="repleCount" resultType="int">
+	 	<![CDATA[
+	 		SELECT COUNT(*) FROM JET_board_notice_reple WHERE jet_board_notice_no = #{jet_board_notice_no}
+	 	]]>
+	 </select>
+	
+	 
+	 <!-- 리플 삭제 -->
+	<delete id="deleteReple">
+		<![CDATA[
+			DELETE
+			FROM JET_board_notice_reple
+			WHERE jet_notice_reple_no = #{no}
+		]]>
+	</delete>
+	
+ 
+	 
+	 
+</mapper>

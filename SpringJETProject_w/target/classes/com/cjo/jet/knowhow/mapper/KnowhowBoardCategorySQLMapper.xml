@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.knowhow.mapper.KnowhowBoardCategorySQLMapper">
+
+	<!-- 글 카테고리 보기 -->
+	<select id="selectByNo" resultType="com.cjo.jet.vo.KnowhowBoardCategoryVo">
+		<![CDATA[
+			SELECT * FROM jet_board_knowhow_category
+			WHERE jet_board_knowhow_category_no = #{jet_board_knowhow_category_no}
+		]]>
+	</select>
+	
+	<!-- 글 카테고리 수정 -->
+	<update id="update">
+		<![CDATA[
+			UPDATE jet_board_knowhow
+			SET jet_board_knowhow_category_no = #{jet_board_knowhow_category_no}
+			WHERE jet_board_knowhow_no = #{jet_board_knowhow_no}
+		]]>
+	</update>
+	
+	<!-- 카테고리로 글 검색 -->
+	<select id="selectByCategory" resultType="com.cjo.jet.vo.KnowhowBoardVo">
+		<![CDATA[
+			SELECT * FROM jet_board_knowhow
+			WHERE jet_board_knowhow_category_no = #{jet_board_knowhow_category_no}
+			ORDER BY jet_board_knowhow_no DESC
+		]]>
+	</select>
+	
+	<!-- 카테고리 + 제목 검색 -->
+	<select id="selectByCategoryTitle" resultType="com.cjo.jet.vo.KnowhowBoardVo">
+		<![CDATA[
+			SELECT * FROM jet_board_knowhow
+			WHERE jet_board_knowhow_category_no = #{jet_board_knowhow_category_no}
+			and jet_board_knowhow_title LIKE '%' || #{search_word} || '%'
+			ORDER BY jet_board_knowhow_no DESC
+		]]>
+	</select>
+	
+	<!-- 카테고리 + 내용 검색 -->
+	<select id="selectByCategoryContent" resultType="com.cjo.jet.vo.KnowhowBoardVo">
+		<![CDATA[
+			SELECT * FROM jet_board_knowhow
+			WHERE jet_board_knowhow_category_no = #{jet_board_knowhow_category_no}
+			and jet_board_knowhow_content LIKE '%' || #{search_word} || '%'
+			ORDER BY jet_board_knowhow_no DESC
+		]]>
+	</select>
+	
+	<!-- 카테고리 + 작성자 검색 -->
+	<select id="selectByCategoryWriter" resultType="com.cjo.jet.vo.KnowhowBoardVo">
+		<![CDATA[
+			SELECT k.*
+			FROM jet_board_knowhow k, jet_member m
+			WHERE jet_board_knowhow_category_no = #{jet_board_knowhow_category_no}
+			AND m.jet_member_no = k.jet_member_no
+			AND m.jet_member_nick LIKE '%' || #{search_word} || '%'
+			ORDER BY jet_board_knowhow_no DESC
+		]]>
+	</select>
+	
+</mapper>

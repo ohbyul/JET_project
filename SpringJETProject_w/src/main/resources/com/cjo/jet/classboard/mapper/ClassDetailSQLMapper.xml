@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.classboard.mapper.ClassDetailSQLMapper">
+
+	<!-- 기본키 생성  -->
+	<select id="createKey" resultType="int">
+	<![CDATA[	
+		SELECT jet_class_detail_seq.nextval
+		FROM Dual
+	]]>	
+	</select>	
+	
+	<!-- 원데이클래스 세부정보 삽입 -->
+	<insert id="insertDetail">
+	<![CDATA[	
+		INSERT INTO jet_class_detail
+		VALUES(
+		    #{jet_class_detail_no},
+		    #{jet_class_no},
+		    #{jet_class_detail_date}
+		)
+	]]>	
+	</insert>
+	
+	<!-- detail no로 detailVo 뽑아오기 -->
+	<select id="selectByNo" resultType="com.cjo.jet.vo.ClassDetailVo">
+		<![CDATA[
+			SELECT * FROM jet_class_detail
+			WHERE jet_class_detail_no = #{jet_class_detail_no}
+		]]>
+	</select>
+	
+	<!-- 모든 글 리스트 from DetailTable no 페이징
+	SELECT ROWNUM, x.*
+    	FROM ( SELECT a.* 
+    			FROM jet_class_detail a
+        		WHERE a.jet_class_detail_date > SYSDATE-1
+        		ORDER BY a.jet_class_detail_date ASC
+     		 ) x
+	
+	//클래스 수강날짜 순으로 리스트 no 페이징	  -->
+	<select id="selectAllNoPaging" resultType="com.cjo.jet.vo.ClassDetailVo">
+	<![CDATA[	
+		SELECT * FROM jet_class_detail ORDER BY jet_class_detail_date ASC
+	]]>		
+	</select>
+	
+	
+	<select id="getPageCount" resultType="int">
+	<![CDATA[	
+		SELECT CEIL(COUNT(*)/9) FROM jet_class_detail
+	]]>	
+	</select>
+	
+	<!-- 페이지 글 9개씩 가져오기 -->
+	<select id="selectAll" resultType="com.cjo.jet.vo.ClassDetailVo">
+	<![CDATA[
+			SELECT c2.* 
+			FROM(
+			    SELECT c1.*,ROWNUM as rnum 
+			    FROM(
+			    	SELECT * 
+			    	FROM jet_class_detail 
+			    	WHERE jet_class_detail_date > SYSDATE-1 
+			    	ORDER BY jet_class_detail_date ASC
+			    	)c1
+			    )c2
+			WHERE c2.rnum >= (#{page_num}-1)*9+1 
+			AND c2.rnum <= #{page_num}*9
+	]]>
+	</select>
+	
+	<!-- 찜하기 -->
+	<insert id="insertPick">
+		<![CDATA[	
+			INSERT INTO JET_class_pick 
+			VALUES (
+					JET_class_pick_seq.nextval,
+					#{jet_member_no},
+					#{jet_class_detail_no}
+			)
+		]]>
+	</insert>
+	
+	<delete id="deletePick">
+		<![CDATA[
+			DELETE 
+			FROM jet_class_pick
+			WHERE jet_class_detail_no = #{jet_class_detail_no}
+			AND jet_member_no = #{jet_member_no}
+		]]>
+	</delete>
+	
+	<select id="checkPick" resultType="com.cjo.jet.vo.ClassPickVo">
+		<![CDATA[
+			SELECT *
+			FROM jet_class_pick
+			WHERE jet_class_detail_no = #{jet_class_detail_no} 
+			AND jet_member_no = #{jet_member_no}
+		]]>
+	</select>
+	
+	
+	
+	
+	
+		
+	<!-- 신고 -->
+	<insert id="insertSingo">
+		<![CDATA[
+			INSERT INTO jet_board_class_singo VALUES (
+			    jet_board_class_singo_seq.nextval,
+			    #{jet_board_class_detail_no},
+			    #{jet_member_no},
+			    #{jet_board_class_singo_reason},
+			    SYSDATE
+			)
+		]]>
+	</insert>
+	
+	<!-- 신고 여부 확인. 개수 -->
+	<select id="isSingoByUser" resultType="int">
+		<![CDATA[
+			SELECT count(*)
+			FROM jet_board_class_singo 
+			WHERE jet_board_class_detail_no = #{jet_board_class_detail_no}
+			AND jet_member_no = #{jet_member_no}
+		]]>
+	</select>
+	
+	<!-- 신고 리스트 출력... no 페이징 .. -->
+	<select id="selectAllSingoNoPage" resultType="com.cjo.jet.vo.ClassSingoVo">
+		<![CDATA[
+			SELECT * FROM jet_board_class_singo 
+			ORDER BY jet_board_class_singo_date DESC
+		]]>
+	</select>
+	
+	
+	
+	
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.content.mapper.ContentSQLMapper">
+
+
+<!-- 최신글 3개 뽑기 공유게시판꺼 -->
+<select id="newSharePlanBoard" resultType="com.cjo.jet.vo.SharePlanBoardVo">
+	<![CDATA[
+		select s.jet_board_shareplan_no
+		from (select jet_board_shareplan_no, ROW_NUMBER() OVER (ORDER BY jet_board_shareplan_writedate DESC)AS RANK 
+		      FROM jet_board_shareplan) s
+		WHERE s.rank <= 3
+	]]>
+</select>
+
+
+<!-- 최신글 3개 뽑기 파티찾기 게시판 -->
+<select id="newPartyBoard" resultType="com.cjo.jet.vo.PartyBoardVo">
+	<![CDATA[
+		select p.jet_board_party_no
+		from (select jet_board_party_no, ROW_NUMBER() OVER (ORDER BY jet_board_party_writedate DESC)AS RANK 
+		      FROM jet_board_party) p
+		WHERE p.rank <= 3
+	]]>
+</select>
+<select id="newNoticeBoard" resultType="com.cjo.jet.vo.NoticeBoardVo">
+	<![CDATA[
+		SELECT n.jet_board_notice_no FROM(
+			SELECT jet_board_notice_no, ROW_NUMBER() OVER 
+				(ORDER BY jet_board_notice_writedate DESC)AS RANK 
+			FROM jet_board_notice
+		) n 
+		WHERE n.RANK <= 4
+	]]>
+</select>
+<!-- 원데이 클래스 추천 3개 뽑기 -->
+<select id="recommendClassBoard" resultType="com.cjo.jet.vo.ClassDetailVo">
+	<![CDATA[
+		select detailASC.jet_class_detail_no
+		from (
+		  SELECT jet_class_detail_no, ROW_NUMBER() OVER (ORDER BY jet_class_Detail_date ASC)AS RANK , jet_class_detail_date
+		  FROM jet_class_detail 
+		  WHERE jet_class_Detail_date > SYSDATE-1) detailASC 
+		  WHERE detailASC.rank <=3
+	]]>
+</select>
+
+
+</mapper>

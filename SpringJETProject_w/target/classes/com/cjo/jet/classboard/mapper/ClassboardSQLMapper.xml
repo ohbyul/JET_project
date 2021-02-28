@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.classboard.mapper.ClassboardSQLMapper">
+
+	<!-- 기본키 생성 -->
+	<select id="createKey" resultType="int">
+		<![CDATA[	
+			SELECT jet_class_seq.nextval
+			FROM Dual
+		]]>	
+	</select>
+	
+	<!-- 원데이클래스 개설 -->
+	<insert id="insertClass">
+		<![CDATA[		
+			INSERT INTO jet_class 
+			VALUES(
+			    #{jet_class_no},
+			    #{jet_member_no},
+			    #{jet_class_category_no},
+			    #{jet_class_name},
+			    #{jet_class_content},
+			    #{jet_class_latitude},
+			    #{jet_class_longitude},
+			    #{jet_class_price},
+			    #{jet_class_totaltime},
+			    #{jet_class_max_headcount},
+			    #{jet_class_address},
+			    SYSDATE
+			    )
+		]]>		
+	</insert>
+
+	
+	
+	<!-- 
+	게시글 목록 보기. 원데이클래스 & 클래스 세부사항 합쳐서 (레프트 아우터 조인)
+	<select id="selectAll" resultType="com.cjo.jet.vo.ClassboardVo">
+		<![CDATA[
+			SELECT *
+			FROM jet_class, jet_class_detail
+			WHERE jet_class.jet_class_no = jet_class_detail.jet_class_no
+			ORDER BY jet_class_detail_date DESC
+		]]>
+	</select>
+	-->
+	
+	<!-- 
+	글 읽기. 원데이클래스 상세 페이지 보기 . 대신맨 아래것ㄱ.
+	<select id="selectByClassNo" resultType="com.cjo.jet.vo.ClassboardVo">
+		<![CDATA[
+			select *
+			from jet_class
+			WHERE jet_class_no = #{jet_class_no}
+		]]>
+	</select>
+	 -->
+	
+	<!-- 상세 페이지 읽기 -->
+	<select id="selectClassJoinDetail" resultType="com.cjo.jet.vo.ClassboardVo">
+		<![CDATA[
+			SELECT *
+			FROM jet_class c, jet_class_detail d
+			WHERE c.jet_class_no = d.jet_class_no
+			AND d.jet_class_detail_no = #{jet_class_detail_no}
+		]]>
+	</select>
+	
+	<!-- 디테일리스트 클래스브이오에 디테일브이오의 넘버를 클래스브이오에  넣는 거. -->
+	<select id="selectByNo" resultType="com.cjo.jet.vo.ClassboardVo">
+		<![CDATA[	
+			SELECT * 
+			FROM jet_class 
+			WHERE jet_class_no = #{jet_class_no}
+		]]>		
+	</select>
+	
+	
+	
+	
+	<!-- 원데이클래스 삭제 -->
+	<delete id="deleteClass">
+		<![CDATA[
+			DELETE FROM jet_class
+			WHERE jet_class_no = #{jet_class_no}
+		]]>
+	</delete>
+	
+	
+
+</mapper>

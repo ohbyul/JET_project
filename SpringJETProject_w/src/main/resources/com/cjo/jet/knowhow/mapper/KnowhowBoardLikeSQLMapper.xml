@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.knowhow.mapper.KnowhowBoardLikeSQLMapper">
+
+	<!-- 사용자가 좋아요 눌렀는지 확인 (= 0 or > 0) -->
+	<select id="isLikedByUser" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*)
+			FROM jet_board_knowhow_like
+			WHERE jet_member_no = #{jet_member_no}
+			AND jet_board_knowhow_no = #{jet_board_knowhow_no}
+		]]>
+	</select>
+	
+	<!-- 좋아요 삽입 -->
+	<insert id="insertLike">
+		<![CDATA[
+			INSERT INTO jet_board_knowhow_like VALUES (
+				jet_board_knowhow_like_seq.nextval,
+				#{jet_board_knowhow_no},
+				#{jet_member_no}
+			)		
+		]]>
+	</insert>
+	
+	<!-- 좋아요 삭제 -->
+	<delete id="deleteLike">
+		<![CDATA[
+			DELETE
+			FROM jet_board_knowhow_like
+			WHERE jet_board_knowhow_no = #{jet_board_knowhow_no}
+			and jet_member_no = #{jet_member_no}
+		]]>
+	</delete>
+	
+	<!-- 게시글 당 좋아요 개수 -->
+	<select id="countLike" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*)
+			FROM jet_board_knowhow_like
+			WHERE jet_board_knowhow_no = #{jet_board_knowhow_no}
+		]]>	
+	</select>
+	
+</mapper>

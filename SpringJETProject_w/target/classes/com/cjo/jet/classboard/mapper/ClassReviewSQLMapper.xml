@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.classboard.mapper.ClassReviewSQLMapper">
+
+	<!-- 별점 및 후기 작성하기 -->
+	<insert id="insertReview">
+		<![CDATA[
+			INSERT INTO jet_class_review VALUES (
+			    jet_class_review_seq.nextval,
+			    #{jet_class_detail_no},
+			    #{jet_member_no},
+			    #{jet_class_review_star_rating},
+			    #{jet_class_review_content},
+			    SYSDATE
+			)
+		]]>
+	</insert>
+
+	<!-- 특정 원데이클래스의 리뷰 리스트 뽑기 -->
+	<select id="selectReviewsByClassNo" resultType="com.cjo.jet.vo.ClassReviewVo">
+		<![CDATA[
+			SELECT jet_class_detail_no 
+			FROM jet_class_detail 
+			WHERE jet_class_no = #{jet_class_no}
+		]]>
+	</select>
+
+
+	<!-- 특정 원데이클래스의 별점 평균 구하기 -->
+	<select id="selectStarRatingByClassNo" resultType="float">
+		<![CDATA[
+			SELECT NVL(AVG(jet_class_review_star_rating),0)
+			FROM jet_class_review
+			WHERE jet_class_detail_no IN (
+				SELECT jet_class_detail_no
+				FROM jet_class_detail
+				WHERE jet_class_no = #{jet_class_no}
+				)
+		]]>
+	</select>
+	
+	<!-- 내가 작성한 특정 원데이클래스 리뷰 보기 -->
+	<select id="selectReviewsByMemberNo" resultType="com.cjo.jet.vo.ClassReviewVo">
+		<![CDATA[
+			SELECT *
+			FROM jet_class_review
+			WHERE jet_member_no = #{jet_member_no}
+			AND jet_class_detail_no = #{jet_class_detail_no}
+		]]>
+		<!-- AND jet_class_detail_no = #{jet_class_detail_no} -->
+	</select>
+	
+	
+	<!-- 클래스 리뷰 뽑기  -->
+	<select id="selectReviews" resultType="com.cjo.jet.vo.ClassReviewVo">
+		<![CDATA[
+			SELECT * FROM jet_class_review 
+			WHERE jet_class_detail_no IN (
+			    SELECT jet_class_detail_no FROM jet_class_detail
+			    WHERE jet_class_no = (
+			        SELECT jet_class_no FROM jet_class_detail
+			        WHERE jet_class_detail_no = #{jet_class_detail_no}
+			    )
+			)
+		]]>
+	</select>
+
+	
+</mapper>

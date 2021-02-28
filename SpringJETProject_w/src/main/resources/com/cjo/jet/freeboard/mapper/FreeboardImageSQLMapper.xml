@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.freeboard.mapper.FreeboardImageSQLMapper">
+
+	<insert id="insertImage">
+	<![CDATA[
+		INSERT INTO jet_board_free_image
+		VALUES (
+			jet_board_free_image_seq.nextval,
+			#{jet_board_free_no},
+			#{jet_board_free_image_link}
+		)
+	]]>
+	</insert>
+	
+	<select id="selectByFreeboardNo" resultType="com.cjo.jet.vo.FreeboardImageVo">
+	<![CDATA[
+		SELECT * FROM jet_board_free_image
+		WHERE jet_board_free_no = #{jet_board_free_no} 
+	]]>	
+	</select>
+
+</mapper>

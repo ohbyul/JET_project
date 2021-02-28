@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mapper의 xml파일 이름은 인터페이스 이름과 동일하게 작성 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.ratio.mapper.RatioSQLMapper">
+	<!-- 전체 성비 -->
+	<select id="selectAllUserRatio" resultType="map">
+		<![CDATA[
+			SELECT '전체'sex,count(jet_member_sex)as ratio_count FROM jet_member
+		]]>
+	</select>
+	<!-- 여성 유저-->
+	<select id="selectFeMaleUserRatio" resultType="map">
+		<![CDATA[
+			SELECT * FROM(
+				SELECT jm.jet_member_sex as sex, COUNT(jm.jet_member_sex) as ratio_count 
+				FROM JET_member jm GROUP BY jm.jet_member_sex
+			) ratio 
+			WHERE ratio.sex = 'FeMale'
+		]]>
+	</select>
+	<!-- 남성 유저-->
+	
+	<select id="selectMaleUserRatio" resultType="map">
+		<![CDATA[
+			SELECT * FROM(
+				SELECT jm.jet_member_sex as sex, COUNT(jm.jet_member_sex) as ratio_count 
+				FROM JET_member jm GROUP BY jm.jet_member_sex
+			) ratio 
+			WHERE ratio.sex = 'Male'
+		]]>
+	</select>
+	<select id="selectNewMemberCountByDate" resultType="map">
+		<![CDATA[
+			SELECT count(jet_member_no)as new_member, to_char(jet_member_joindate,'yy/mm/dd') AS joindate 
+			FROM jet_member WHERE to_char(jet_member_joindate,'yy/mm/dd') >= '21/02/10' 
+			AND to_char(jet_member_joindate,'yy/mm/dd') < '21/02/30'
+			GROUP BY to_char(jet_member_joindate,'yy/mm/dd') 
+			ORDER BY to_char(jet_member_joindate,'yy/mm/dd')
+		]]>
+	</select>
+	<select id="selectShareplanCount" resultType="map">
+		<![CDATA[
+			select count(*) as count,'공유게시판'as posts from jet_board_shareplan
+		]]>
+	</select>
+	<select id="selectBoardPartyCount" resultType="map">
+		<![CDATA[
+			select count(*) as count,'여행친구찾기'as posts from jet_board_party
+		]]>
+	</select>
+	<select id="selectBoardKnowhowCount" resultType="map">
+		<![CDATA[
+			select count(*) as count,'팁과노하우'as posts from jet_board_knowhow
+		]]>
+	</select>
+	<select id="selectBoardReviewCount" resultType="map">
+		<![CDATA[
+			select count(*) as count,'리뷰게시판'as posts from jet_board_review
+		]]>
+	</select>
+	<select id="selectBoardFreeCount" resultType="map">
+		<![CDATA[
+			select count(*) as count,'자유게시판'as posts from jet_board_free
+		]]>
+	</select>
+	<select id="selectMCsCount" resultType="map">
+		<![CDATA[
+			SELECT COUNT(jet_board_m_cs_no)as COUNT FROM jet_board_m_cs
+		]]>	
+	</select>
+	<select id="selectACsCount" resultType="map">
+		<![CDATA[
+			SELECT COUNT(jet_board_a_cs_no)as COUNT FROM jet_board_a_cs
+		]]>	
+	</select>
+	<!-- 게시판 별 성비 -->
+	<select id="selectReviewGenderRatio" resultType="map">
+		<![CDATA[
+			SELECT * FROM(
+				SELECT DISTINCT jm.jet_member_no, jm.jet_member_sex 
+				FROM jet_member jm, jet_board_review jr 
+				WHERE jm.jet_member_no = jr.jet_member_no
+			) 
+			PIVOT 
+			(COUNT(jet_member_no) 
+			FOR jet_member_sex 
+			IN('Male'as Male,'FeMale'as FeMale))
+		]]>
+	</select>
+	<select id="selectPartyGenderRatio" resultType="map">
+		<![CDATA[
+			SELECT * FROM(SELECT DISTINCT jm.jet_member_no, jm.jet_member_sex FROM jet_member jm, jet_board_party jp WHERE jm.jet_member_no = jp.jet_member_no) PIVOT (COUNT(jet_member_no) FOR jet_member_sex IN('Male'as Male,'FeMale'as FeMale))
+		]]>
+	</select>
+	<select id="selectKnowhowGenderRatio" resultType="map">
+		<![CDATA[
+			SELECT * FROM(SELECT DISTINCT jm.jet_member_no, jm.jet_member_sex FROM jet_member jm, jet_board_knowhow jh WHERE jm.jet_member_no = jh.jet_member_no) PIVOT (COUNT(jet_member_no) FOR jet_member_sex IN('Male'as Male,'FeMale'as FeMale))
+		]]>
+	</select>
+	<select id="selectFreeBoardGenderRatio" resultType="map">
+		<![CDATA[
+			SELECT * FROM(SELECT DISTINCT jm.jet_member_no, jm.jet_member_sex FROM jet_member jm, jet_board_free jf WHERE jm.jet_member_no = jf.jet_member_no) PIVOT (COUNT(jet_member_no) FOR jet_member_sex IN('Male'as Male,'FeMale'as FeMale))
+		]]>
+	</select>
+	<select id="selectShareplanGenderRatio" resultType="map">
+		<![CDATA[
+			SELECT * FROM(SELECT DISTINCT jm.jet_member_no, jm.jet_member_sex FROM jet_member jm, jet_board_shareplan js WHERE jm.jet_member_no = js.jet_member_no) PIVOT (COUNT(jet_member_no) FOR jet_member_sex IN('Male'as Male,'FeMale'as FeMale))
+		]]>
+	</select>
+</mapper>

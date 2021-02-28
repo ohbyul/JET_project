@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.freeboard.mapper.FreeboardSQLMapper">
+
+	<select id="createKey" resultType="int">
+	<![CDATA[	
+		SELECT jet_board_free_seq.nextval FROM Dual
+	]]>	
+	</select>
+	
+	<!-- 글쓰기 /nextval 변경 프라이머리키 뜯어냈음으로]-->
+	<insert id="insert">
+	<![CDATA[
+		INSERT INTO jet_board_free 
+		VALUES(
+			#{jet_board_free_no},
+		    #{jet_member_no},
+		    #{jet_board_free_title},
+		    #{jet_board_free_content},
+		    0,
+		    SYSDATE,
+		    #{jet_board_free_category_no}
+		)
+	]]>
+	</insert>
+	
+	
+	<!-- 좋아요 기능들  -->
+	<select id="checkLike" resultType="com.cjo.jet.vo.FreeboardLikeVo">
+	<![CDATA[
+		SELECT * FROM Jet_board_free_like
+		WHERE jet_board_free_no = #{jet_board_free_no} AND jet_member_no = #{jet_member_no}
+	]]>	
+	</select>
+	
+	<!-- VO가 없을 때 정보 넣기 -->
+	<insert id="insertLike">
+	<![CDATA[
+		INSERT INTO Jet_board_free_like 
+		VALUES(
+		    jet_board_free_like_seq.nextval,
+		    #{jet_board_free_no},
+		    #{jet_member_no}
+		)
+	]]>
+	</insert>
+	
+	<!-- VO가 있을 때 정보 넣기 -->
+	<delete id="deleteLike">
+	<![CDATA[
+		DELETE FROM jet_board_free_like 
+		WHERE jet_board_free_no = #{jet_board_free_no} AND jet_member_no = #{jet_member_no}		
+	]]>		
+	</delete>
+	
+	<select id="getLikeCount" resultType="int">
+	<![CDATA[
+		SELECT COUNT(*) FROM jet_board_free_like WHERE jet_board_free_no = #{jet_board_free_no}
+	]]>
+	</select>	
+	
+	
+	<!-- 페이지 글 10개씩 가져오기 -->
+	<select id="selectAll" resultType="com.cjo.jet.vo.FreeboardVo">
+	<![CDATA[
+			SELECT c2.* 
+			FROM(
+			    SELECT c1.*,ROWNUM as rnum 
+			    FROM(
+			    	SELECT * 
+			    	FROM jet_board_free 
+			    	ORDER BY jet_board_free_no DESC
+			    	)c1
+			    )c2
+			WHERE c2.rnum >= (#{page_num}-1)*10+1 
+			AND c2.rnum <= #{page_num}*10
+	]]>
+	</select>
+	
+	<!-- 제목 검색 -->
+	<select id="selectByTitle" resultType="com.cjo.jet.vo.FreeboardVo">
+	<![CDATA[
+		SELECT * FROM Jet_board_free 
+		WHERE jet_board_free_title 
+		LIKE '%'||#{search_word}||'%' ORDER BY jet_board_free_no DESC
+	]]>
+	</select>
+	
+	<!-- 내용 검색 -->
+	<select id="selectByContent" resultType="com.cjo.jet.vo.FreeboardVo">
+	<![CDATA[
+		SELECT * FROM Jet_board_free 
+		WHERE jet_board_free_content
+		LIKE '%'||#{search_word}||'%' ORDER BY jet_board_free_no DESC
+	]]>
+	</select>
+	
+	<!-- 작성자 검색 -->
+	<select id="selectByWriter" resultType="com.cjo.jet.vo.FreeboardVo">
+	<![CDATA[
+		SELECT * FROM Jet_board_free f, Jet_member m
+		WHERE f.jet_member_no = m.jet_member_no 
+		AND m.jet_member_nick LIKE '%'||#{search_word}||'%' ORDER BY jet_board_free_no DESC
+	]]>
+	</select>
+			
+	<!-- 글 보기..쿼리.. 카테고리 추가함  		
+		//SELECT *
+		FROM Jet_board_free F
+		LEFT OUTER JOIN Jet_board_free_category C
+		ON F.jet_board_free_category_no = C.jet_board_free_category_no
+		WHERE jet_board_free_no = #{jet_board_free_no}		    -->
+	<select id="selectByNo" resultType="com.cjo.jet.vo.FreeboardVo">
+	<![CDATA[
+		SELECT * FROM jet_board_free WHERE jet_board_free_no = #{no}
+	]]>
+	</select>	
+	
+	<select id="selectByCategoryNo" resultType="com.cjo.jet.vo.FreeboardVo">
+	<![CDATA[
+		SELECT * FROM jet_board_free
+		WHERE jet_board_free_category_no = #{jet_board_free_category_no}
+	]]>
+	</select>		
+	
+	<select id="selectByCNo" resultType="com.cjo.jet.vo.FreeboardCategoryVo">
+	<![CDATA[
+		SELECT * FROM jet_board_free_category
+		WHERE jet_board_free_category_no = #{jet_board_free_category_no}
+	]]>
+	</select>	
+	
+	<delete id="deleteByNo">
+	<![CDATA[
+		DELETE FROM jet_board_free WHERE jet_board_free_no = #{no}
+	]]>
+	</delete>
+	
+	<update id="update">
+	<![CDATA[
+		UPDATE jet_board_free
+		SET jet_board_free_title = #{jet_board_free_title},
+			jet_board_free_content = #{jet_board_free_content}
+		WHERE jet_board_free_no = #{jet_board_free_no}		
+	]]>
+	</update>
+	
+	<delete id="deleteReple">
+	<![CDATA[
+		DELETE FROM jet_board_free_reple WHERE jet_board_free_reple_no = #{jet_board_free_reple_no}
+	]]>
+	</delete>
+	
+	<update id="updateReple">
+	<![CDATA[
+		UPDATE jet_board_free_reple
+		SET jet_board_free_reple_content = #{jet_board_free_reple_content}
+		WHERE jet_board_free_reple_no = #{jet_board_free_reple_no}		
+	]]>
+	</update>	
+	
+	<update id="increaseReadCount">
+	 <![CDATA[		
+	 	UPDATE jet_board_free
+	 	SET jet_board_free_readcount = jet_board_free_readcount + 1
+	 	WHERE jet_board_free_no = #{no}
+	 ]]>	
+	</update>
+	
+	<insert id="insertReple">
+	 <![CDATA[	
+		INSERT INTO jet_board_free_reple
+		VALUES(
+		    jet_board_free_reple_seq.nextval,
+		    #{jet_board_free_no},
+		    #{jet_member_no},
+		    #{jet_board_free_reple_content},
+		    SYSDATE
+		)	
+	 ]]>	
+	</insert>
+	
+	<!-- 리플 가져오기 -->
+	<select id="selectReple" resultType="com.cjo.jet.vo.FreeboardRepleVo">
+	 <![CDATA[	
+		SELECT * FROM Jet_board_free_reple 
+		WHERE jet_board_free_no = #{jet_board_free_no}
+		ORDER BY jet_board_free_reple_no ASC
+	 ]]>	
+	</select>
+	
+		<!-- 페이지 개수 구하기 -->
+	<select id="getPageCount" resultType="int">
+	<![CDATA[	
+		SELECT CEIL(COUNT(*)/10) FROM jet_board_free
+	]]>	
+	</select>
+	
+	<select id="getRepleCount" resultType="int">
+	<![CDATA[
+		SELECT COUNT(*) FROM jet_board_free_reple WHERE jet_board_free_no = #{jet_board_free_no}
+	]]>
+	</select>
+	
+	<!-- 신고 -->
+	<insert id="insertReport">
+	<![CDATA[
+		INSERT INTO Jet_board_free_report
+		VALUES(
+		    Jet_board_free_report_seq.nextval,
+		    #{jet_board_free_no},
+		    #{jet_member_no},
+		    #{jet_board_free_report_reason},
+		    SYSDATE
+		)
+	]]>
+	</insert>
+	
+	 <!-- 신고자인지 체크 1출만 출력 -->
+ 	<select id="selectReportByNo" resultType="com.cjo.jet.vo.FreeboardReportVo">
+	<![CDATA[
+		 SELECT * FROM Jet_board_free_report 
+		 WHERE jet_board_free_no = #{jet_board_free_no}
+		 AND jet_member_no = #{jet_member_no}
+	]]>
+	</select>	
+	
+	
+	
+	
+	
+</mapper>

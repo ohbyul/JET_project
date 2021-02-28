@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.boardReview.mapper.ReviewRepleSQLMapper">
+
+	<insert id="insert">
+		<![CDATA[
+			INSERT INTO jet_board_review_reple VALUES(
+				jet_board_review_reple_seq.nextval, 
+				#{jet_member_no}, 
+				#{jet_board_review_no}, 
+				#{jet_board_review_reple_content}, 
+				SYSDATE
+			)
+		]]>
+	</insert>
+	<select id="selectByReViewNo" resultType="com.cjo.jet.vo.ReviewRepleVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_review_reple 
+			WHERE jet_board_review_no = #{jet_board_review_no}
+			ORDER BY jet_board_review_reple_no ASC
+			
+		]]>
+	</select>
+	
+	<select id="selectByReViewNoDESC" resultType="com.cjo.jet.vo.ReviewRepleVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_review_reple 
+			WHERE jet_board_review_no = #{jet_board_review_no}
+			ORDER BY jet_board_review_reple_no DESC
+			
+		]]>
+	</select>
+	
+	<select id="repleCount" resultType="int">
+		<![CDATA[
+			SELECT count(*)
+			FROM jet_board_review_reple 
+			WHERE jet_board_review_no = #{review_no}
+		]]>
+	</select>
+	
+	<delete id="deleteReple">
+		<![CDATA[
+			DELETE
+			FROM jet_board_review_reple
+			WHERE jet_board_review_reple_no = #{no}
+		]]>
+	</delete>
+	
+	<select id="selectByNo" resultType="com.cjo.jet.vo.ReviewRepleVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_review_reple
+			WHERE jet_board_review_reple_no = #{no}
+		]]>
+	</select>
+	
+</mapper>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.knowhow.mapper.KnowhowBoardSQLMapper">
+
+	<!-- 기본키 생성-->
+	<select id="createKey" resultType="int">
+		<![CDATA[
+			SELECT jet_board_knowhow_seq.nextval
+			FROM DUAL
+		]]>
+	</select>
+
+	<!-- 글 쓰기 -->
+	<insert id="insert">
+		<![CDATA[
+			INSERT INTO jet_board_knowhow VALUES(
+	 		    #{jet_board_knowhow_no},
+	 		    #{jet_member_no},
+	 		    #{jet_board_knowhow_title},
+	 		    #{jet_board_knowhow_content},
+	 		    0,
+	 		    SYSDATE,
+	 		    #{jet_board_knowhow_category_no}
+	 		)
+		]]>
+	</insert>
+	
+	<!-- 글 목록 보기 -->
+	<select id="selectAll" resultType="com.cjo.jet.vo.KnowhowBoardVo">
+		<![CDATA[
+	 		SELECT * 
+	 		FROM (
+	 		    SELECT c1.*,ROWNUM as rnum 
+	 		    FROM (
+	 		        SELECT * 
+	 		        FROM jet_board_knowhow 
+	 		        ORDER BY jet_board_knowhow_no DESC) c1
+	 		    ) c2
+	 		WHERE c2.rnum >= (#{page_num}-1)*10+1 
+	 		AND c2.rnum <= #{page_num}*10
+	 	]]>
+	</select>
+	
+	<!-- 글 읽기 -->
+	<select id="selectByNo" resultType="com.cjo.jet.vo.KnowhowBoardVo">
+		<![CDATA[
+			SELECT *
+			FROM jet_board_knowhow
+			WHERE jet_board_knowhow_no = #{no}
+		]]>
+	</select>
+	
+	<!-- 글 삭제 -->
+	<delete id="deleteByNo">
+		<![CDATA[
+			DELETE
+			FROM jet_board_knowhow
+			WHERE jet_board_knowhow_no = #{no}
+		]]>
+	</delete>
+	
+	<!-- 글 수정 -->
+	<update id="update">
+		<![CDATA[
+			UPDATE jet_board_knowhow
+			SET jet_board_knowhow_title = #{jet_board_knowhow_title},
+			jet_board_knowhow_content = #{jet_board_knowhow_content}
+			WHERE jet_board_knowhow_no = #{jet_board_knowhow_no}
+		]]>
+	</update>
+	
+	<!-- 글 조회수 증가 -->
+	<update id="increaseReadCount">
+		<![CDATA[
+			UPDATE jet_board_knowhow
+			SET jet_board_knowhow_readcount = jet_board_knowhow_readcount + 1
+			WHERE jet_board_knowhow_no = #{no}
+		]]>
+	</update>
+	
+	<!-- 글 검색 -->
+	<!-- 제목으로 검색 -->
+	<select id="selectByTitle" resultType="com.cjo.jet.vo.KnowhowBoardVo">
+		<![CDATA[
+			SELECT * FROM jet_board_knowhow
+			WHERE jet_board_knowhow_title LIKE '%' || #{search_word} || '%'
+			ORDER BY jet_board_knowhow_no DESC
+		]]>
+	</select>
+	
+	<!-- 내용으로 검색 -->
+	<select id="selectByContent" resultType="com.cjo.jet.vo.KnowhowBoardVo">
+		<![CDATA[
+			SELECT * FROM jet_board_knowhow
+			WHERE jet_board_knowhow_content LIKE '%' || #{search_word} || '%'
+			ORDER BY jet_board_knowhow_no DESC
+		]]>
+	</select>
+	
+	<!-- 작성자로 검색 -->
+	<select id="selectByWriter" resultType="com.cjo.jet.vo.KnowhowBoardVo">
+		<![CDATA[
+			SELECT k.*
+			FROM jet_board_knowhow k, jet_member m
+			WHERE m.jet_member_no = k.jet_member_no
+			AND m.jet_member_nick LIKE '%' || #{search_word} || '%'
+			ORDER BY jet_board_knowhow_no DESC
+		]]>
+	</select>
+	
+	<!--페이지 수 -->
+	<select id="countPage" resultType="int">
+		<![CDATA[
+	 		SELECT CEIL(COUNT(*)/10)
+	 		FROM jet_board_knowhow
+	 	]]>
+	</select>
+	
+	
+	
+	
+	
+	
+	<!-- 신고 -->
+	 <insert id="insertSingo">
+		<![CDATA[
+			INSERT INTO jet_board_knowhow_singo VALUES(
+		    JET_board_knowhow_singo_seq.nextval,
+		    #{jet_board_knowhow_no},
+		    #{jet_member_no},
+		    #{jet_board_knowhow_singo_reason},
+		    SYSDATE
+			)
+		]]>
+	</insert>
+	
+	<!-- 신고 여부 확인. 개수 -->
+	<select id="isSingoByUser" resultType="int">
+		<![CDATA[
+			SELECT count(*)
+			FROM jet_board_knowhow_singo 
+			WHERE jet_board_knowhow_no = #{jet_board_knowhow_no}
+			AND jet_member_no = #{jet_member_no}
+		]]>
+	</select>
+	
+	
+	
+	
+	
+	 <!-- 신고자인지 체크 1출만 출력 -->
+	 	<select id="selectSingoByNo" resultType="com.cjo.jet.vo.KnowhowSingoVo">
+		<![CDATA[
+			 SELECT * FROM jet_board_knowhow_singo 
+			 WHERE jet_board_knowhow_no = #{jet_board_knowhow_no}
+			 AND jet_member_no = #{jet_member_no}
+		]]>
+	</select>
+		
+	<!-- 신고 리스트 출력... no 페이징 .. -->
+	<select id="selectAllSingoNoPage" resultType="com.cjo.jet.vo.KnowhowSingoVo">
+		<![CDATA[
+			SELECT * FROM jet_board_knowhow_singo 
+			ORDER BY jet_board_knowhow_singo_date DESC
+		]]>
+	</select>
+	
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.travelplan.mapper.TravelPlanDetailSQLMapper">
+	
+<!-- 	<select id="travelPlanDetailPK" resultType="int"> -->
+<!-- 		<![CDATA[ -->
+<!-- 			SELECT JET_BOARD_TP_DETAIL_SEQ.nextval FROM jet_board_tp_detail -->
+<!-- 		]]> -->
+<!-- 	</select> -->
+	
+	<!-- 여행계획 일정 디테일 1줄 리플 형식으로 인서트.. AJAX처리 -->
+	 <insert id="insertDetails">
+	 	<![CDATA[
+	 		INSERT INTO JET_board_tp_detail VALUES (
+		    JET_board_tp_detail_seq.nextval,
+		    #{jet_board_travelplan_no},
+		    #{jet_board_tp_detail_ctgr_no},
+		    #{jet_board_tp_detail_latitude},
+		    #{jet_board_tp_detail_longitude},
+		    #{jet_board_tp_detail_day},
+		    #{jet_board_tp_detail_starthours},
+		    #{jet_board_tp_detail_startmin},
+		    #{jet_board_tp_detail_placename},
+		    #{jet_board_tp_detail_adress},
+		    #{jet_board_tp_detail_content}
+			)
+	 	]]>
+	 </insert>
+	
+	<select id="selectDetailsByPlanNo" resultType="com.cjo.jet.vo.TravelPlanDetailVo">
+		<![CDATA[
+			SELECT * FROM jet_board_tp_detail WHERE jet_board_travelplan_no = #{no}
+		]]>
+	</select>
+
+	<select id="selectAllPlanDetails" resultType="com.cjo.jet.vo.TravelPlanDetailVo">
+		<![CDATA[
+			SELECT * FROM jet_board_tp_detail ORDER BY jet_board_tp_detail_no DESC
+		]]>
+	</select>
+	
+	<select id="selectCategoryByNo" resultType="com.cjo.jet.vo.TravelPlanDetailCategoryVo">
+		<![CDATA[
+			select * from jet_board_tp_detail_ctgr WHERE jet_board_tp_detail_ctgr_no = #{no}
+		]]>
+	</select>
+	<select id="selectByNo" resultType="com.cjo.jet.vo.TravelPlanDetailVo">
+		<![CDATA[
+			SELECT * FROM jet_board_tp_detail WHERE jet_board_travelplan_no = #{no}
+		]]>
+	</select>
+	
+	<select id="selectNameByNo" resultType="com.cjo.jet.vo.TravelPlanDetailCategoryVo">
+		<![CDATA[
+			SELECT jet_board_tp_detail_ctgr_name FROM jet_board_tp_detail_ctgr WHERE jet_board_tp_detail_ctgr_no = #{no}
+		]]>
+	</select>
+	<delete id="deletePlanDetail">
+		<![CDATA[
+			DELETE FROM jet_board_tp_detail WHERE jet_board_travelplan_no =#{no}
+		]]>
+	</delete>
+</mapper>

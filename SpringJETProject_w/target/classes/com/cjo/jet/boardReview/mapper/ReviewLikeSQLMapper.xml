@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.boardReview.mapper.ReviewLikeSQLMapper">
+	
+	<insert id="insertLike">
+		<![CDATA[
+			INSERT INTO jet_board_review_like VALUES(
+			jet_board_review_like_seq.nextval, 
+			#{jet_board_review_no}, 
+			#{jet_member_no}
+			)
+			
+		]]>
+	</insert>
+	
+	<select id="likeCount" resultType="int">
+		<![CDATA[
+			SELECT count(*)
+			FROM jet_board_review_like
+			WHERE jet_board_review_no = #{review_no}
+		]]>
+	</select>
+	
+	<delete id="deleteLike">
+		<![CDATA[
+			DELETE
+			FROM jet_board_review_like
+			WHERE jet_board_review_no = #{jet_board_review_no}
+			AND jet_member_no = #{jet_member_no}
+		]]>
+	</delete>
+	
+	<select id="selectByno" resultType="com.cjo.jet.vo.ReviewLikeVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_review_like
+			WHERE jet_member_no = #{jet_member_no}
+			AND jet_board_review_no = #{jet_board_review_no}
+		]]>
+	</select>
+	
+</mapper>

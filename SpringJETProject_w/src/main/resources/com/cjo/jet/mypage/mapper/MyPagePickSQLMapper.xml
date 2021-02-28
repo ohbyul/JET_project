@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.mypage.mapper.MyPagePickSQLMapper">
+
+	<select id="selectPickBoard" resultType="com.cjo.jet.vo.SharePlanBoardVo">
+		<![CDATA[
+			select s.jet_board_shareplan_no, s.jet_board_shareplan_title, s.jet_board_shareplan_writedate, s.jet_board_shareplan_readcount 
+			from jet_board_pick p, jet_board_shareplan s
+			WHERE p.jet_board_shareplan_no = s.jet_board_shareplan_no AND p.jet_member_no = #{jet_member_no}
+			ORDER BY s.jet_board_shareplan_no DESC
+		]]>
+	</select>
+	
+</mapper>

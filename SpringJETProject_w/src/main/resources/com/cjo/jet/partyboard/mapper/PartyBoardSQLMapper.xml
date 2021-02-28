@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.partyboard.mapper.PartyBoardSQLMapper">
+	
+	<!-- 프라이머리 키 생성 -->
+	<select id="creatKey" resultType="int">
+		<![CDATA[
+			SELECT JET_board_party_seq.nextval FROM Dual
+		]]>
+	</select>
+	
+	
+	<insert id="insert">
+		<![CDATA[
+			INSERT INTO JET_board_party VALUES(
+		    #{jet_board_party_no},
+		    #{jet_member_no},
+		    #{jet_board_travelplan_no},
+		    #{jet_board_party_title},
+		    #{jet_board_party_content},
+		    0,
+		    #{jet_board_party_headcount},
+		    1,
+		    #{jet_board_party_startgather},
+		    #{jet_board_party_endgather},
+		    #{jet_board_party_tsday},
+		    SYSDATE
+			)
+		]]>
+	</insert>
+
+	<!-- 게시판 출력... no 페이징 .. -->
+	<select id="selectAllNoPage" resultType="com.cjo.jet.vo.PartyBoardVo">
+		<![CDATA[
+			SELECT * FROM JET_board_party 
+			ORDER BY jet_board_party_no DESC
+		]]>
+	</select>
+	
+	<!-- 글 보기 -->
+	<select id="selectByNo" resultType="com.cjo.jet.vo.PartyBoardVo">
+		<![CDATA[
+			SELECT * FROM JET_board_party WHERE jet_board_party_no = #{no}
+		]]>
+	</select>
+	
+	<!-- 글 삭제-->
+	<delete id="deleteByNo">
+		<![CDATA[
+			DELETE FROM JET_board_party WHERE jet_board_party_no = #{no}
+		]]>
+	</delete>
+	
+	<!-- 글 수정 -->
+	<update id="update">
+		<![CDATA[			
+			UPDATE JET_board_party 
+			SET jet_board_party_title = #{jet_board_party_title},
+			jet_board_travelplan_no= #{jet_board_travelplan_no},
+			jet_board_party_content = #{jet_board_party_content},
+			jet_board_party_headcount = #{jet_board_party_headcount},
+			jet_board_party_startgather = #{jet_board_party_startgather},
+			jet_board_party_endgather = #{jet_board_party_endgather},
+			jet_board_party_tsday = #{jet_board_party_tsday}
+			WHERE jet_board_party_no = #{jet_board_party_no}
+		]]>
+	</update>	
+		
+	<!-- 글 조회수 증가 -->
+	 <update id="increaseReadcount">
+	 	<![CDATA[
+	 		UPDATE JET_board_party 
+	 		SET jet_board_party_readcount = jet_board_party_readcount + 1 
+			WHERE jet_board_party_no = #{no}
+	 	]]>
+	 </update>	
+	 
+	 <!-- 확정인원  증가 -->
+	 <update id="increaseFixcount">
+	 	<![CDATA[
+	 		UPDATE JET_board_party 
+	 		SET jet_board_party_fixcount = jet_board_party_fixcount + 1 
+			WHERE jet_board_party_no = #{no}
+	 	]]>
+	 </update>	
+
+	 <!-- 확정인원  감소 -->
+	 <update id="decreaseFixcount">
+	 	<![CDATA[
+	 		UPDATE JET_board_party 
+	 		SET jet_board_party_fixcount = jet_board_party_fixcount - 1 
+			WHERE jet_board_party_no = #{no}
+	 	]]>
+	 </update>	
+
+	 <!-- 신고 -->
+	 <insert id="insertSingo">
+		<![CDATA[
+			INSERT INTO JET_board_party_singo VALUES(
+		    JET_board_party_singo_seq.nextval,
+		    #{jet_board_party_no},
+		    #{jet_member_no},
+		    #{jet_board_party_singo_reason},
+		    SYSDATE
+			)
+		]]>
+	</insert>
+	 <!-- 신고자인지 체크 1출만 출력 -->
+	 	<select id="selectSingoByNo" resultType="com.cjo.jet.vo.PartySingoVo">
+		<![CDATA[
+			 SELECT * FROM JET_board_party_singo 
+			 WHERE jet_board_party_no  =#{jet_board_party_no }
+			 AND jet_member_no = #{jet_member_no}
+		]]>
+	</select>
+		
+	<!-- 신고 리스트 출력... no 페이징 .. -->
+	<select id="selectAllSingoNoPage" resultType="com.cjo.jet.vo.PartySingoVo">
+		<![CDATA[
+			SELECT * FROM JET_board_party_singo 
+			ORDER BY jet_board_party_singo_date DESC
+		]]>
+	</select>
+	<select id="selectSingoList" resultType="com.cjo.jet.vo.PartySingoVo">
+		<![CDATA[
+			SELECT DISTINCT sin.jet_board_party_no FROM(
+				SELECT jet_board_party_no, ROW_NUMBER() OVER(ORDER BY jet_board_party_singo_date DESC)AS RANK 
+				FROM JET_board_party_singo
+			)sin 
+			WHERE sin.RANK <=4
+		]]>
+	</select>
+</mapper>

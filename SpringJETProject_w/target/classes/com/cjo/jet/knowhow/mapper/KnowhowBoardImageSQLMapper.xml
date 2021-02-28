@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.knowhow.mapper.KnowhowBoardImageSQLMapper">
+
+	<!-- 이미지 삽입 -->
+	<insert id="insert">
+		<![CDATA[
+			INSERT INTO jet_board_knowhow_image VALUES (
+			    jet_board_knowhow_image_seq.nextval,
+			    #{jet_board_knowhow_no},
+			    #{jet_board_knowhow_image_link}
+			)
+		]]>
+	</insert>
+	
+	<!-- 이미지 보기 -->
+	<select id="selectByContentNo" resultType="com.cjo.jet.vo.KnowhowBoardImageVo">
+		<![CDATA[
+			SELECT * FROM jet_board_knowhow_image
+			WHERE jet_board_knowhow_no = #{jet_board_knowhow_no}
+		]]>
+	</select>
+	
+</mapper>

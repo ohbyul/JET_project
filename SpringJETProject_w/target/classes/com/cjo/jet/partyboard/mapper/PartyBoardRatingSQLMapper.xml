@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.partyboard.mapper.PartyBoardRatingSQLMapper">
+
+	<!-- 친구 점수 인서트   -->
+	<insert id="insertRating">
+		<![CDATA[
+			INSERT INTO JET_party_rating VALUES (
+		    JET_party_rating_seq.nextval,
+		    #{jet_board_party_no},
+		    #{jet_member_no},
+		    #{jet_party_rating_value}
+			)
+		]]>
+	</insert>
+	
+	<!-- 한줄 출력 평가 체크  -->
+	<select id="selectByNo" resultType="com.cjo.jet.vo.PartyRatingVo">
+		<![CDATA[
+			SELECT * FROM JET_party_rating 
+			WHERE jet_board_party_no = #{jet_board_party_no}
+			AND jet_member_no =#{jet_member_no}
+		]]>
+	</select>	
+	
+	  <!--평균 값 -->
+	 <select id="getMemberCredit" resultType="object">
+	 	<![CDATA[
+	 		SELECT ROUND(AVG(jet_party_rating_value))
+			FROM JET_party_rating 
+			WHERE jet_member_no =#{jet_member_no}
+	 	]]>
+	 </select>
+	
+</mapper>

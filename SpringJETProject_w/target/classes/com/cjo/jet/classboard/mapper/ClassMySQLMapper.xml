@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.classboard.mapper.ClassMySQLMapper">
+	
+	<select id="selectMyClass" resultType="com.cjo.jet.vo.ClassboardVo">
+	<![CDATA[
+		SELECT * FROM jet_class WHERE jet_member_no = #{jet_member_no}
+	]]>
+	</select>
+
+	<select id="selectByNo" resultType="com.cjo.jet.vo.ClassDetailVo">
+	<![CDATA[	
+		SELECT * FROM jet_class_detail WHERE jet_class_no = #{jet_class_no}
+	]]>		
+	</select> 
+	
+	<select id="selectByDNo" resultType="com.cjo.jet.vo.ClassDetailVo">
+	<![CDATA[	
+		SELECT * FROM jet_class_detail WHERE jet_class_detail_no = #{jet_class_detail_no}
+	]]>		
+	</select>
+	
+	<select id="selectByMNo" resultType="com.cjo.jet.vo.MemberVo">
+	<![CDATA[	
+		SELECT * FROM jet_member WHERE jet_member_no = #{jet_member_no}
+	]]>		
+	</select>	
+	
+	<select id="selectRByNo" resultType="com.cjo.jet.vo.ClassReservationVo">
+	<![CDATA[		
+		SELECT * FROM jet_class_reservation WHERE jet_class_detail_no = #{jet_class_detail_no}
+	]]>		
+	</select>	
+
+</mapper>

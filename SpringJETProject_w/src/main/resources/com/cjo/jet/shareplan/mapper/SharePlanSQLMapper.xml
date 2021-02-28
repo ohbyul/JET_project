@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.shareplan.mapper.SharePlanSQLMapper">
+
+	<select id="sharePlanPK" resultType="int">
+		<![CDATA[
+			SELECT jet_board_shareplan_seq.nextval
+			FROM DUAL
+		]]>
+	</select>
+
+	<insert id="insertSharePlan">
+		<![CDATA[
+			INSERT INTO JET_board_shareplan VALUES(
+				#{jet_board_shareplan_no},
+				#{jet_member_no}, 
+				#{jet_board_travelplan_no}, 
+				#{jet_board_shareplan_title}, 
+				#{jet_board_shareplan_content}, 
+				0, 
+				SYSDATE, 
+				#{jet_board_shareplan_category}
+			)
+		]]>
+	</insert>
+	
+	<select id="selectAll" resultType="com.cjo.jet.vo.SharePlanBoardVo">
+		<![CDATA[
+		SELECT * 
+        FROM jet_board_shareplan 
+        ORDER BY jet_board_shareplan_no DESC
+	]]>
+	</select>
+	
+	<select id="selectByTitle" resultType="com.cjo.jet.vo.SharePlanBoardVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_shareplan
+			WHERE jet_board_shareplan_title LIKE '%' || #{serch_word} || '%'
+			ORDER BY jet_board_shareplan_no DESC			
+		]]>
+	</select>
+	
+	<select id="selectByContent" resultType="com.cjo.jet.vo.SharePlanBoardVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_shareplan
+			WHERE jet_board_shareplan_content LIKE '%' || #{serch_word} || '%'
+			ORDER BY jet_board_shareplan_no DESC
+		]]>
+	</select>
+	
+	<select id="selectByWriter" resultType="com.cjo.jet.vo.SharePlanBoardVo">
+		<![CDATA[
+			SELECT r.*
+			FROM jet_member m, jet_board_shareplan s
+			WHERE m.jet_member_no = s.jet_member_no
+			AND m.jet_member_nick LIKE '%' || #{serch_word} || '%'
+			ORDER BY jet_board_shareplan_no DESC
+		]]>
+	</select>	
+	
+	<select id="getPageCount" resultType="int">
+		<![CDATA[
+			SELECT CEIL(COUNT(*)/10) 
+			FROM jet_board_shareplan
+		]]>
+	</select>
+	
+	
+	<select id="selectByNo" resultType="com.cjo.jet.vo.SharePlanBoardVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_shareplan
+			WHERE jet_board_shareplan_no = #{no}
+		]]>
+	</select>
+	
+	<delete id="deleteByNo">
+		<![CDATA[
+			DELETE 
+			FROM jet_board_shareplan
+			WHERE jet_board_shareplan_no = #{no}
+		]]>
+	
+	</delete>
+	
+	<!-- 업데이트 -->
+	<update id="updateByNo">
+		<![CDATA[
+			UPDATE jet_board_shareplan
+			SET jet_board_travelplan_no = #{jet_board_travelplan_no}, 
+				jet_board_shareplan_title = #{jet_board_shareplan_title}, 
+				jet_board_shareplan_content = #{jet_board_shareplan_content} 
+			WHERE jet_board_shareplan_no = #{jet_board_shareplan_no}
+		]]>
+	</update>
+	
+	<update id="increaseReadCount">
+		<![CDATA[
+			UPDATE jet_board_shareplan
+			SET jet_board_shareplan_readcount = jet_board_shareplan_readcount + 1
+			WHERE jet_board_shareplan_no = #{no}
+		]]>
+	</update>
+	
+	<select id="thumbnail" resultType="com.cjo.jet.vo.SharePlanImageVo">
+		<![CDATA[
+			select i.jet_board_shareplan_image_link
+			from JET_board_shareplan s, JET_board_shareplan_Image i
+			WHERE s.jet_board_shareplan_no = i.jet_board_shareplan_no AND s.jet_board_shareplan_no=#{no}
+		]]>
+	</select>
+	
+	<select id="getTravelNo" resultType="com.cjo.jet.vo.SharePlanBoardVo">
+		<![CDATA[
+			SELECT jet_board_travelplan_no 
+			FROM jet_board_shareplan
+			WHERE jet_board_shareplan_no = #{no}
+		]]>
+	</select>
+	<!-- 핫게뽑기 -->
+	<select id="hotBoard" resultType="com.cjo.jet.vo.SharePlanBoardVo">
+		<![CDATA[
+			SELECT hot.jet_board_shareplan_no
+			FROM (SELECT *
+			FROM (SELECT s.jet_board_shareplan_no, ROW_NUMBER() OVER (ORDER BY S.score DESC) AS rank 
+			        FROM (SELECT R.jet_board_shareplan_no, (r.read_score+l.like_score)score
+			                FROM (SELECT jet_board_shareplan_no,JET_board_shareplan_readcount read_score 
+			                FROM JET_board_shareplan
+			                WHERE jet_board_shareplan_writedate + 30 > SYSDATE
+			                ORDER BY jet_board_shareplan_readcount DESC) R, (
+			                SELECT jet_board_shareplan_no, COUNT(jet_board_shareplan_no), COUNT(jet_board_shareplan_like_no)*10 like_score 
+			                FROM jet_board_shareplan_like 
+			                GROUP BY jet_board_shareplan_no
+			                ORDER BY like_score DESC) L
+			                WHERE R.jet_board_shareplan_no = L.jet_board_shareplan_no
+			                ORDER BY score DESC) S) E
+			WHERE E.rank <=3)hot
+		]]>
+	</select>
+	
+	<!-- 찜하기 -->
+	<select id="insertPick">
+		<![CDATA[
+			INSERT INTO jet_board_pick VALUES(
+				jet_board_pick_seq.nextval,
+				#{jet_member_no},
+				#{jet_board_shareplan_no}
+			)
+		]]>
+	</select>
+	
+	<!-- 찜취소 -->
+	<delete id="deletePick">
+		<![CDATA[
+			DELETE
+			FROM jet_board_pick
+			WHERE jet_board_shareplan_no = #{jet_board_shareplan_no}
+			AND jet_member_no = #{jet_member_no}
+		]]>
+	</delete>
+	<!-- 찜번호 -->
+	<select id="selectByPickNo" resultType="com.cjo.jet.vo.PickBoardVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_pick
+			WHERE jet_member_no = #{jet_member_no}
+			AND jet_board_shareplan_no = #{jet_board_shareplan_no}
+		]]>
+	</select>
+	
+	<select id="selectPickBoard" resultType="com.cjo.jet.vo.PickBoardVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_pick
+			WHERE jet_member_no = #{jet_member_no}
+		]]>
+	</select>
+	<!-- 이건 4개만 -->
+	<select id="selectRecommendClass" resultType="com.cjo.jet.vo.ClassboardVo">
+		<![CDATA[
+			select jet_class_no
+			FROM(
+			        select jet_class_no, ROW_NUMBER() OVER (ORDER BY jet_class_no DESC)AS rank
+			        FROM(
+						select jet_class_no
+						from (select d.jet_board_tp_detail_no,c.jet_class_no,SQRT(Power((c.jet_class_latitude - d.jet_board_tp_detail_latitude),2) + Power((c.jet_class_longitude - d.jet_board_tp_detail_longitude),2)) Distance
+						        from jet_class c, jet_board_tp_detail d
+						        where d.jet_board_travelplan_no = #{jet_board_travelplan_no}
+						        ORDER BY d.jet_board_tp_detail_no) Distance_table 
+						WHERE Distance_table.distance <= 0.1
+						GROUP BY jet_class_no
+						ORDER BY jet_class_no DESC) RANK)ENDClass
+			WHERE rank<=2
+		]]>
+	</select>
+	
+	<!-- 이건 전체 -->
+		<select id="selectRecommendClassAll" resultType="com.cjo.jet.vo.ClassboardVo">
+		<![CDATA[
+			select jet_class_no
+			from (select d.jet_board_tp_detail_no,c.jet_class_no,SQRT(Power((c.jet_class_latitude - d.jet_board_tp_detail_latitude),2) + Power((c.jet_class_longitude - d.jet_board_tp_detail_longitude),2)) Distance
+			        from jet_class c, jet_board_tp_detail d
+			        where d.jet_board_travelplan_no = #{jet_board_travelplan_no}
+			        ORDER BY d.jet_board_tp_detail_no) Distance_table 
+			WHERE Distance_table.distance <= 0.2
+			GROUP BY jet_class_no
+			ORDER BY jet_class_no DESC
+		]]>
+	</select>
+
+	 <!-- 신고 -->
+	 <insert id="insertReport">
+		<![CDATA[
+			INSERT INTO JET_board_shareplan_report VALUES(
+		    JET_board_shareplan_report_seq.nextval,
+		    #{jet_board_shareplan_no},
+		    #{jet_member_no},
+		    #{jet_board_share_report_reason},
+		    SYSDATE
+			)
+		]]>
+	</insert>
+	 <!-- 신고자인지 체크 1출만 출력 -->
+	 	<select id="selectReportByNo" resultType="com.cjo.jet.vo.SharePlanReportVo">
+		<![CDATA[
+			 SELECT * FROM JET_board_shareplan_report 
+			 WHERE jet_board_shareplan_no  = #{jet_board_shareplan_no }
+			 AND jet_member_no = #{jet_member_no}
+		]]>
+	</select>
+		
+	<!-- 신고 리스트 출력... no 페이징 .. -->
+	<select id="selectAllReportNoPage" resultType="com.cjo.jet.vo.SharePlanReportVo">
+		<![CDATA[
+			SELECT * FROM JET_board_shareplan_report 
+			ORDER BY jet_board_share_report_date DESC
+		]]>
+	</select>
+	<select id="selectReportList" resultType="com.cjo.jet.vo.SharePlanReportVo">
+		<![CDATA[
+			SELECT sin.jet_board_shareplan_no FROM(
+				SELECT jet_board_shareplan_no, ROW_NUMBER() OVER(ORDER BY jet_board_share_report_date DESC)AS RANK 
+				FROM JET_board_shareplan_report
+			)sin 
+			WHERE sin.RANK <=6
+		]]>
+	</select>	
+</mapper>

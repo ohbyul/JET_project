@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.shareplan.mapper.SharePlanRepleSQLMapper">
+
+	<insert id="insert">
+		<![CDATA[
+			INSERT INTO jet_board_shareplan_reple VALUES(
+				jet_board_shareplan_reple_seq.nextval, 
+				#{jet_member_no}, 
+				#{jet_board_shareplan_no}, 
+				#{jet_shareplan_reple_content}, 
+				SYSDATE
+			)
+		]]>
+	</insert>
+	<select id="selectByShareplanNo" resultType="com.cjo.jet.vo.SharePlanRepleVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_shareplan_reple 
+			WHERE jet_board_shareplan_no = #{jet_board_shareplan_no}
+			ORDER BY jet_shareplan_reple_no ASC
+			
+		]]>
+	</select>
+	<select id="selectByShareplanNoDESC" resultType="com.cjo.jet.vo.SharePlanRepleVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_shareplan_reple 
+			WHERE jet_board_shareplan_no = #{jet_board_shareplan_no}
+			ORDER BY jet_shareplan_reple_no DESC
+			
+		]]>
+	</select>
+	
+	<select id="repleCount" resultType="int">
+		<![CDATA[
+			SELECT count(*)
+			FROM jet_board_shareplan_reple 
+			WHERE jet_board_shareplan_no = #{shareplan_no}
+		]]>
+	</select>
+	
+	<delete id="deleteReple">
+		<![CDATA[
+			DELETE
+			FROM jet_board_shareplan_reple
+			WHERE jet_shareplan_reple_no = #{no}
+		]]>
+	</delete>
+	
+	<select id="selectByNo" resultType="com.cjo.jet.vo.SharePlanRepleVo">
+		<![CDATA[
+			SELECT * 
+			FROM jet_board_shareplan_reple
+			WHERE jet_shareplan_reple_no = #{no}
+		]]>
+	</select>
+	
+</mapper>

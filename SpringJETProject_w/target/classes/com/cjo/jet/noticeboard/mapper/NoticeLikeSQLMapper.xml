@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.cjo.jet.noticeboard.mapper.NoticeLikeSQLMapper">
+	
+	<!-- 좋아요 증가 -->
+	<insert id="insertLike">
+		<![CDATA[
+			INSERT INTO JET_board_notice_like VALUES(
+				JET_board_notice_like_seq.nextval,
+				#{jet_board_notice_no},
+				#{jet_member_no}
+			)
+		]]>
+	</insert>
+
+	<!-- 좋아요 취소 -->
+	<delete id="deleteLike">
+		<![CDATA[
+			DELETE FROM JET_board_notice_like 
+			WHERE jet_board_notice_no = #{jet_board_notice_no}
+			AND jet_member_no =#{jet_member_no}
+		]]>
+	</delete>
+	
+	<!-- 좋아요 한줄 출력 AND jet_member_no =#{jet_member_no} -->
+	<select id="selectByNo" resultType="com.cjo.jet.vo.NoticeLikeVo">
+		<![CDATA[
+			SELECT * FROM JET_board_notice_like 
+			WHERE jet_board_notice_no = #{jet_board_notice_no}
+			AND jet_member_no =#{jet_member_no}
+		]]>
+	</select>
+	
+	<!-- 좋아요 갯수 -->
+	<select id="likeCount" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM JET_board_notice_like 
+			WHERE jet_board_notice_no= #{jet_board_notice_no}
+		]]>
+	</select>
+	
+	
+</mapper>

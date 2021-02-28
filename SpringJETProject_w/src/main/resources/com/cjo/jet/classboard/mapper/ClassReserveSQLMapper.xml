@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjo.jet.classboard.mapper.ClassReserveSQLMapper">
+
+	<select id="checkReservation" resultType="com.cjo.jet.vo.ClassReservationVo">
+		<![CDATA[
+			SELECT * FROM jet_class_reservation
+			WHERE jet_member_no = #{jet_member_no}
+			AND jet_class_detail_no = #{jet_class_detail_no}
+		]]>
+	</select>
+
+	<!-- 사용자가 예약 눌렀는지 확인 (=0 or > 0) -->
+	<select id="isReservedByUser" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*)
+			FROM jet_class_reservation
+			WHERE jet_member_no = #{jet_member_no}
+			AND jet_class_detail_no = #{jet_class_detail_no}
+		]]>
+	</select>
+
+	<!-- 예약. 예약 삽입 -->
+	<insert id="insertReserve">
+		<![CDATA[
+			INSERT INTO jet_class_reservation VALUES (
+				jet_class_reservation_seq.nextval,
+				#{jet_member_no},
+				#{jet_class_detail_no},
+				SYSDATE
+			)
+		]]>
+	</insert>
+
+	<!-- 예약 취소. 예약 삭제 -->
+	<delete id="deleteReserve">
+		<![CDATA[
+			DELETE FROM jet_class_reservation
+			WHERE jet_class_detail_no = #{jet_class_detail_no}
+			AND jet_member_no = #{jet_member_no}
+		]]>
+	</delete>
+
+	<!-- 클래스 당 예약 개수 -->
+	<select id="countReserve" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*)
+			FROM jet_class_reservation
+			WHERE jet_class_detail_no = #{jet_class_detail_no}
+		]]>
+	</select>
+	
+	<!-- 나의 예약 리스트 보기 -->
+	<select id="selectMyReservations" resultType="com.cjo.jet.vo.ClassReservationVo">
+		<![CDATA[
+			SELECT *
+			FROM jet_class_reservation
+			WHERE jet_member_no = #{jet_member_no}
+		]]>
+	</select>
+
+</mapper>

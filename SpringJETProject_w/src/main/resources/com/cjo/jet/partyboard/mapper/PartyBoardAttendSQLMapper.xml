@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cjo.jet.partyboard.mapper.PartyBoardAttendSQLMapper">
+
+	<!-- 참가 신청 인서트 -->
+	 <insert id="insert">
+	 	<![CDATA[
+	 		INSERT INTO JET_party_attend VALUES (
+		    JET_party_attend_seq.nextval,
+		    #{jet_board_party_no},
+		    #{jet_member_no},
+		    #{jet_party_attend_content},
+		    #{jet_party_attend_state_no},
+		    SYSDATE
+			)
+	 	]]>
+	 </insert>
+	 
+	 <!-- 출력 -->
+	 <select id="selectByContentNo" resultType="com.cjo.jet.vo.PartyBoardAttendVo">
+	 	<![CDATA[
+	 		SELECT * FROM JET_party_attend 
+	 		WHERE jet_board_party_no = #{jet_board_party_no}	
+			ORDER BY jet_party_attend_no ASC 	
+	 	]]>
+	 </select>
+	 
+	 <!-- 댓글 한개의 vo출력  -->
+	 <select id="selectByNo" resultType="com.cjo.jet.vo.PartyBoardAttendVo">
+	 	<![CDATA[
+	 		SELECT * FROM JET_party_attend 
+	 		WHERE jet_party_attend_no =#{jet_party_attend_no}	
+	 	]]>
+	 </select>
+	 	
+	 <!-- 리플 갯수 출력 -->
+	 <select id="attendCount" resultType="int">
+	 	<![CDATA[
+	 		SELECT COUNT(*) FROM JET_party_attend WHERE jet_board_party_no = #{jet_board_party_no}
+	 	]]>
+	 </select>
+	 
+	<!-- 리플 삭제 -->
+	<delete id="deleteAttend">
+		<![CDATA[
+			DELETE
+			FROM JET_party_attend
+			WHERE jet_party_attend_no = #{no}
+		]]>
+	</delete>
+	 
+	 <!-- 승인 -->
+	 <update id="updateAttendStateApprove">
+	 	UPDATE JET_party_attend 
+	 	SET jet_party_attend_state_no = 2 
+	 	WHERE jet_party_attend_no =#{jet_party_attend_no}
+	 </update>
+	 
+	  <!-- 거절 -->
+	 <update id="updateAttendStateReject">
+	 	UPDATE JET_party_attend 
+	 	SET jet_party_attend_state_no = 3 
+	 	WHERE jet_party_attend_no =#{jet_party_attend_no}
+	 </update>
+	 
+	 <!--승인 확정된 사람들의 리스트-->
+	 <select id="selectApproveByCNo" resultType="com.cjo.jet.vo.PartyBoardAttendVo">
+	 	<![CDATA[
+	 		SELECT * FROM JET_party_attend 
+	 		WHERE jet_board_party_no =#{jet_board_party_no} 
+	 		AND jet_party_attend_state_no = 2
+	 		ORDER BY jet_party_attend_no ASC
+	 	]]>
+	 </select>
+</mapper>
