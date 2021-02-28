@@ -5,6 +5,8 @@
 ![KakaoTalk_20210226_135823572](https://user-images.githubusercontent.com/64420512/109262091-48d59c00-7844-11eb-93c5-9fe946f0e609.jpg)
 # Addrress
 http://52.78.184.164/
+# Skills
+![image](https://user-images.githubusercontent.com/64420512/109424707-12f10d00-7a28-11eb-9cb9-e9b7531b8d4f.png)
 # 메인페이지
 ![image](https://user-images.githubusercontent.com/64420512/109423848-7a0cc280-7a24-11eb-908c-a628c1a418d6.png)
 # 로그인
