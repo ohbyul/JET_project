@@ -1,5 +1,5 @@
 # JET_project
-
+Jeju Travel Companion & Plan Sharing Travel Platform
 제주 여행 동행자 & 계획 공유 여행 플랫폼 
 
 ![KakaoTalk_20210226_135823572](https://user-images.githubusercontent.com/64420512/109262091-48d59c00-7844-11eb-93c5-9fe946f0e609.jpg)
